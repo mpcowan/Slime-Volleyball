@@ -1,0 +1,17 @@
+﻿<Deployment xmlns="http://schemas.microsoft.com/client/2007/deployment" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" EntryPointAssembly="Slime Volleyball" EntryPointType="Slime_Volleyball.App" RuntimeVersion="4.7.50308.0">
+  <Deployment.Parts>
+    <AssemblyPart x:Name="Slime Volleyball" Source="Slime Volleyball.dll" />
+    <AssemblyPart x:Name="Microsoft.Expression.Interactions" Source="Microsoft.Expression.Interactions.dll" />
+    <AssemblyPart x:Name="Microsoft.Xna.Framework.Game" Source="Microsoft.Xna.Framework.Game.dll" />
+    <AssemblyPart x:Name="Microsoft.Xna.Framework.Graphics" Source="Microsoft.Xna.Framework.Graphics.dll" />
+    <AssemblyPart x:Name="Microsoft.Xna.Framework.Interop" Source="Microsoft.Xna.Framework.Interop.dll" />
+    <AssemblyPart x:Name="Slime Engine" Source="Slime Engine.dll" />
+    <AssemblyPart x:Name="System.Windows.Interactivity" Source="System.Windows.Interactivity.dll" />
+    <AssemblyPart x:Name="GoblinXNA" Source="GoblinXNA.dll" />
+    <AssemblyPart x:Name="NyARToolkitCS" Source="NyARToolkitCS.dll" />
+    <AssemblyPart x:Name="NyARToolkit4" Source="NyARToolkit4.dll" />
+    <AssemblyPart x:Name="Nuclex.Fonts" Source="Nuclex.Fonts.dll" />
+    <AssemblyPart x:Name="MataliPhysics" Source="MataliPhysics.dll" />
+    <AssemblyPart x:Name="NyARToolkit4.markersystem" Source="NyARToolkit4.markersystem.dll" />
+  </Deployment.Parts>
+</Deployment>

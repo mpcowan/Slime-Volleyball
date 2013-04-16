@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <members>
+    <member name="T:Microsoft.Xna.Framework.SharedGraphicsDeviceManager">
+      <summary>Handles the configuration and management of a shared graphics device.</summary>
+    </member>
+    <member name="M:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.ApplyChanges">
+      <summary>Applies any changes to device-related properties, changing the graphics device as necessary.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.Current">
+      <summary>Gets the current SharedGraphicsDeviceManager.</summary>
+    </member>
+    <member name="F:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.DefaultBackBufferHeight">
+      <summary>Specifies the default back-buffer height.</summary>
+    </member>
+    <member name="F:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.DefaultBackBufferWidth">
+      <summary>Specifies the default back-buffer width.</summary>
+    </member>
+    <member name="E:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.DeviceCreated">
+      <summary>Raised when a new graphics device is created.</summary>
+      <param name="" />
+    </member>
+    <member name="E:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.DeviceDisposing">
+      <summary>Raised when the GraphicsDevice is being disposed.</summary>
+      <param name="" />
+    </member>
+    <member name="E:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.DeviceReset">
+      <summary>Raised when the GraphicsDevice is reset.</summary>
+      <param name="" />
+    </member>
+    <member name="E:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.DeviceResetting">
+      <summary>Raised when the GraphicsDevice is about to be reset.</summary>
+      <param name="" />
+    </member>
+    <member name="M:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.Dispose(System.Boolean)">
+      <summary>Releases the unmanaged resources used by the SharedGraphicsDeviceManager and optionally releases the managed resources.</summary>
+      <param name="disposing">true to release both automatic and manual resources; false to release only manual resources.</param>
+    </member>
+    <member name="E:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.Disposed">
+      <summary>Raised when the SharedGraphicsDeviceManager is disposed.</summary>
+      <param name="" />
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.GraphicsDevice">
+      <summary>Gets the GraphicsDevice associated with the SharedGraphicsDeviceManager.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.GraphicsProfile">
+      <summary>Gets the GraphicsProfile associated with the SharedGraphicsDeviceManager.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.MultiSampleCount">
+      <summary>Gets or sets the number of per-pixel samples.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.PreferredBackBufferFormat">
+      <summary>Gets or sets the format of the back buffer.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.PreferredBackBufferHeight">
+      <summary>Gets or sets the preferred back-buffer height.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.PreferredBackBufferWidth">
+      <summary>Gets or sets the preferred back-buffer width.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.PreferredDepthStencilFormat">
+      <summary>Gets or sets the format of the depth stencil.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.PresentationInterval">
+      <summary>Gets or sets the maximum rate at which the swap chain's back buffers can be presented to the front buffer.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.RenderTargetUsage">
+      <summary>Gets or sets render target usage flags.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.SharedGraphicsDeviceManager.SynchronizeWithVerticalRetrace">
+      <summary>Gets or sets a value that indicates whether to sync to the vertical trace (vsync) when presenting the back buffer.</summary>
+    </member>
+    <member name="T:Microsoft.Xna.Framework.Graphics.GraphicsDeviceExtensions">
+      <summary>An extension of the GraphicsDevice class that enables primitive based rendering for an application that renders using both Silverlight and XNA.</summary>
+    </member>
+    <member name="M:Microsoft.Xna.Framework.Graphics.GraphicsDeviceExtensions.SetSharingMode(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Boolean)">
+      <summary>Enable/disable sharing a graphics device between Silverlight and XNA.</summary>
+      <param name="device">The graphics device to share.</param>
+      <param name="enabled">True to have Silverlight share the GraphicsDevice with XNA to enable rendering, false to turn off sharing mode with XNA.</param>
+    </member>
+    <member name="T:Microsoft.Xna.Framework.Graphics.UIElementRenderer">
+      <summary>An object for rendering a Silverlight UIElement into a texture.</summary>
+    </member>
+    <member name="M:Microsoft.Xna.Framework.Graphics.UIElementRenderer.#ctor(System.Windows.UIElement,System.Int32,System.Int32)">
+      <summary>Creates an instance of a UIElementRenderer object.</summary>
+      <param name="rootElement">The UIElement to be rendered.</param>
+      <param name="textureWidth">The width of the texture to be rendered into.</param>
+      <param name="textureHeight">The height of the texture to be rendered into.</param>
+    </member>
+    <member name="M:Microsoft.Xna.Framework.Graphics.UIElementRenderer.Dispose">
+      <summary>Releases the unmanaged resources used by the UIElementRenderer.</summary>
+    </member>
+    <member name="M:Microsoft.Xna.Framework.Graphics.UIElementRenderer.Dispose(System.Boolean)">
+      <summary>Releases the unmanaged resources used by the UIElementRenderer and optionally releases the managed resources.</summary>
+      <param name="disposing">Indicates whether an object has been disposed.</param>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.Graphics.UIElementRenderer.Element">
+      <summary>A UIElement for rendering.</summary>
+    </member>
+    <member name="M:Microsoft.Xna.Framework.Graphics.UIElementRenderer.Render">
+      <summary>Renders a Silverlight UIElement into an XNA Framework Texture2D object.</summary>
+    </member>
+    <member name="P:Microsoft.Xna.Framework.Graphics.UIElementRenderer.Texture">
+      <summary>Texture which contains a rendered UIElement.</summary>
+    </member>
+  </members>
+</doc>

@@ -28,6 +28,8 @@ namespace Slime_Engine
         // The sound to make on collisions
         private SoundEffect bounceSound;
 
+        bool custom_collision = false;
+
         public VolleyBall(float mass, float size, SoundEffect bounceSound)
         {
             createObj();
@@ -122,12 +124,15 @@ namespace Slime_Engine
         }
 
         private void ballCollision(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
-        {     
-            String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
-            if (materialName.Equals("court"))
-                ballCollideWithGround(baseObject, collidingObject);
-            else if(materialName.Equals("paddle"))
-                ballCollideWithPlayer(baseObject, collidingObject);
+        {
+            if (custom_collision)
+            {
+                String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
+                if (materialName.Equals("court"))
+                    ballCollideWithGround(baseObject, collidingObject);
+                else if (materialName.Equals("paddle"))
+                    ballCollideWithPlayer(baseObject, collidingObject);
+            }
         }
 
         public Vector3 getPlayerNormal(Vector3 contactPosition, MataliPhysicsObject collidingObject)

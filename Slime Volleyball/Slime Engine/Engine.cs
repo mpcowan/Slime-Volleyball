@@ -176,8 +176,9 @@ namespace Slime_Engine
             scene.RootNode.AddChild(ground_marker_node);
 
             // Create some physical ground object
-            Court court = new Court(float.MaxValue, new Vector3(4 * groundNodeSize, 6 * groundNodeSize, 2f), bounceSound);
-
+            Court court = new Court(float.MaxValue, new Vector3(4 * groundNodeSize, 6 * groundNodeSize, 2f));
+            // Initial translation
+            court.translate(new Vector3(0, 0, 5f));
             // Add it to the scene
             ground_marker_node.AddChild(court.getTransformNode());
 

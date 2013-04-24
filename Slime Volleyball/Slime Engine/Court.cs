@@ -24,17 +24,13 @@ namespace Slime_Engine
         // The TransformationNode to be used to manipulate the ball
         private TransformNode transNode;
 
-        // The sound to make on collisions
-        private SoundEffect bounceSound;
-
-        public Court(float mass, Vector3 size, SoundEffect bounceSound)
+        public Court(float mass, Vector3 size)
         {
             createObj();
             scaleX(size.X);
             scaleY(size.Y);
             scaleZ(size.Z);
             applyPhysics(mass);
-            this.bounceSound = bounceSound;
         }
 
         public TransformNode getTransformNode()
@@ -133,10 +129,10 @@ namespace Slime_Engine
         {
             geomNode.Physics = new MataliObject(geomNode);
             geomNode.Physics.MaterialName = "court";
-            geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Sphere;
+            geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Box;
             geomNode.Physics.Pickable = true;
             ((MataliObject)geomNode.Physics).Restitution = 1f;
-            geomNode.Physics.Interactable = true;
+            //geomNode.Physics.Interactable = true;
             geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;
             geomNode.AddToPhysicsEngine = true;
@@ -146,7 +142,7 @@ namespace Slime_Engine
 
         private void courtCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
-            //SoundEffectInstance instance = Sound.Instance.PlaySoundEffect(bounceSound);
+            
         }
 
         private void courtCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)

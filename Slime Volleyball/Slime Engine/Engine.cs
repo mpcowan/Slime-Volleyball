@@ -24,6 +24,10 @@ using GoblinXNA.Helpers;
 using GoblinXNA.UI;
 using GoblinXNA.UI.UI2D;
 using System.Windows.Media;
+using GoblinXNA.Physics.Matali;
+using GoblinXNA.Physics;
+using MataliPhysicsObject = Komires.MataliPhysics.PhysicsObject;
+using GoblinXNA.Sounds;
 #endregion
 
 namespace Slime_Engine
@@ -33,6 +37,8 @@ namespace Slime_Engine
         Scene scene;
         SpriteFont font;
         bool betterFPS = true;
+
+        SoundEffect bounceSound;
 
         CameraNode cameraNode;
         Viewport viewport;
@@ -71,6 +77,10 @@ namespace Slime_Engine
             // Initialize the scene graph
             scene = new Scene();
             scene.BackgroundColor = Color.Black;
+            scene.PhysicsEngine = new MataliPhysics();
+            scene.PhysicsEngine.Gravity = 40;
+            scene.PhysicsEngine.GravityDirection = new Vector3(0, 0, -1);
+            ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 1 / 30f;
 
             // Set up the lights used in the scene
             CreateLights();
@@ -164,20 +174,21 @@ namespace Slime_Engine
             scene.RootNode.AddChild(ground_marker_node);
 
             // Create some physical ground object
-            AR_Object ground = new AR_Object("cube");
+            //AR_Object ground = new AR_Object("cube", true, 1000f, null);
             // Perform initial manipulations
-            ground.scaleX(3 * groundNodeSize);
-            ground.scaleY(5 * groundNodeSize);
-            ground.scaleZ(2f);
+            //ground.scaleToSize(groundNodeSize);
+            //ground.scaleX(4 * groundNodeSize);
+            //ground.scaleY(6 * groundNodeSize);
+            //ground.scaleZ(2f);
 
-            // Add it to the scene
-            ground_marker_node.AddChild(ground.getTransformNode());
+            //// Add it to the scene
+            //ground_marker_node.AddChild(ground.getTransformNode());
 
             // Start out by creating the volleyball
-            ball = new AR_Object("sphere");
+            ball = new AR_Object("sphere", false, 50f, bounceSound);
             // Perform initial manipulations
-            ball.translate(new Vector3(0, 0, 0));
-            ball.scaleToSize(groundNodeSize);
+            ball.translate(new Vector3(0, 0, 5 * groundNodeSize));
+            ball.scaleToSize(groundNodeSize / 2);
 
             // Add it to the scene
             ground_marker_node.AddChild(ball.getTransformNode());
@@ -187,19 +198,65 @@ namespace Slime_Engine
             scene.RootNode.AddChild(player_marker_node);
 
             // For simplicity sake, start with paddles
-            player_slime = new AR_Object("cube");
+            player_slime = new AR_Object("cube", true, 1000f, null);
             // Perform initial manipulations
             player_slime.translate(new Vector3(0, 0, 0));
-            player_slime.scaleToSize(wandSize);
+            //player_slime.scaleToSize(wandSize);
+            player_slime.scaleX(wandSize * 2);
+            player_slime.scaleY(wandSize * 2);
             player_slime.scaleZ(2f);
 
             // Add it to the scene
             player_marker_node.AddChild(player_slime.getTransformNode());
         }
 
+	public Vector3 getPlayerNormal(Vector3 contactPosition){
+	      Vector3 paddlePosition = player_marker_node.WorldTransformation.Translation;
+	      return contactPosition - paddlePosition;	      
+	}
+
+	public Vector3 getDeflectedVelocity(Vector3 initialVelocity, Vector3 playerNormal){
+	      Vector3 newVelocity = initialVelocity;
+	      Quaternion output = new Quaternion();
+	      output = Quaternion.CreateFromAxisAngle(playerNormal,180f);
+	      Vector3.Transform(newVelocity,output);
+	      return newVelocity;
+	}
+
+	private void BallCollideWithGround(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject){
+	      String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
+	      if(materialName.Equals("Ground")){
+		      SoundEffectInstance instance = Sound.Instance.PlaySoundEffect(bounceSound);
+	              Vector3 linearVelocity = Vector3.Zero;
+		      Vector3 contactPosition = Vector3.Zero;
+		      baseObject.MainWorldTransform.GetPosition(ref contactPosition);
+		      //[TODO]
+		      //if(!inBounds(contactPosition)) //lose
+	              baseObject.MainWorldTransform.GetLinearVelocity(ref linearVelocity);
+		      baseObject.MainWorldTransform.SetLinearVelocity(-1 * linearVelocity);
+	      }
+	}
+
+	private void BalCollideWithPlayer(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+	{
+	    String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
+		if (materialName.Equals("Ground"))
+	        {
+		      Vector3 linearVelocity = Vector3.Zero;
+		      baseObject.MainWorldTransform.GetLinearVelocity(ref linearVelocity);
+		      Vector3 contactPosition = Vector3.Zero;
+		      baseObject.MainWorldTransform.GetPosition(ref contactPosition);
+		      Vector3 normal = getPlayerNormal(contactPosition);
+		      Vector3 newVelocity = getDeflectedVelocity(linearVelocity,normal);
+
+		      baseObject.MainWorldTransform.SetLinearVelocity( newVelocity);
+	        }
+	}
+
         private void LoadContent(ContentManager content)
         {
             font = content.Load<SpriteFont>("font");
+            bounceSound = content.Load<SoundEffect>("rubber_ball_01");
         }
 
         public void Dispose()
@@ -221,5 +278,6 @@ namespace Slime_Engine
             }
             catch (Exception exp) { }
         }
+	
     }
 }

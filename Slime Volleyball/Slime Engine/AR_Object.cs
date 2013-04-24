@@ -1,6 +1,7 @@
 using GoblinXNA.Graphics;
 using GoblinXNA.Graphics.Geometry;
 using GoblinXNA.Helpers;
+using GoblinXNA.Physics.Matali;
 using GoblinXNA.SceneGraph;
 using Microsoft.Xna.Framework;
 using System;
@@ -8,6 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Model = GoblinXNA.Graphics.Model;
+using Komires.MataliPhysics;
+using MataliPhysicsObject = Komires.MataliPhysics.PhysicsObject;
+using GoblinXNA.Sounds;
+using Microsoft.Xna.Framework.Audio;
 
 
 namespace Slime_Engine
@@ -41,9 +46,17 @@ namespace Slime_Engine
         const int MAX_Z = 50;
         const int MIN_Z = -50;
 
-        public AR_Object(string name)
+        // Keep track of the velocity of the ball
+        Vector3 ballVelocity;
+
+        SoundEffect bounceSound;
+
+        public AR_Object(string name, bool stationary, float mass, SoundEffect bounceSound)
         {
             coordSystem = 0;
+
+            this.bounceSound = bounceSound;
+
             if (name.Equals("tank") || name.Equals("Ship"))
             {
                 objType = (int)objectType.model;
@@ -60,8 +73,17 @@ namespace Slime_Engine
             }
 
             // Add physics properties
+            geomNode.Physics = new MataliObject(geomNode);
             geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.ConvexHull;
-            //geomNode.Physics.Pickable = true;
+            geomNode.Physics.Pickable = true;
+            if (!stationary)
+            {
+                geomNode.Physics.Interactable = true;
+                //((MataliObject)geomNode.Physics).CollisionStartCallback = ballCollision;
+                //((MataliObject)geomNode.Physics).CollisionEndCallback = ballCollisionDone;
+                ((MataliObject)geomNode.Physics).Restitution = 1f;
+            }
+            geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;
             geomNode.AddToPhysicsEngine = true;
 
@@ -72,6 +94,25 @@ namespace Slime_Engine
             transNode = new TransformNode();
             transNode.AddChild(geomNode);
         }
+
+        //private void ballCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        //{
+        //    Vector3 velocity = Vector3.Zero;
+        //    baseObject.MainLocalTransform.GetLinearVelocity(ref velocity);
+        //    velocity *= 133;
+        //    baseObject.MainWorldTransform.SetLinearVelocity(ref velocity);
+        //}
+
+        //private void ballCollision(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        //{
+        //    SoundEffectInstance instance = Sound.Instance.PlaySoundEffect(bounceSound);
+        //    Vector3 velocity = Vector3.Zero;
+        //    baseObject.MainLocalTransform.GetLinearVelocity(ref velocity);
+        //    ballVelocity = velocity;
+        //    //Vector3 colliding_normal = Vector3.Zero;
+        //    //collidingObject.GetCollisionPairContactPointNormal(0, 0, ref colliding_normal);
+        //    //Quaternion q = Quaternion.CreateFromAxisAngle(colliding_normal, MathHelper.ToRadians(180));
+        //}
 
         public TransformNode getTransformNode()
         {

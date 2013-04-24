@@ -8,10 +8,10 @@
     <AssemblyPart x:Name="Slime Engine" Source="Slime Engine.dll" />
     <AssemblyPart x:Name="System.Windows.Interactivity" Source="System.Windows.Interactivity.dll" />
     <AssemblyPart x:Name="GoblinXNA" Source="GoblinXNA.dll" />
+    <AssemblyPart x:Name="MataliPhysics" Source="MataliPhysics.dll" />
     <AssemblyPart x:Name="NyARToolkitCS" Source="NyARToolkitCS.dll" />
     <AssemblyPart x:Name="NyARToolkit4" Source="NyARToolkit4.dll" />
     <AssemblyPart x:Name="Nuclex.Fonts" Source="Nuclex.Fonts.dll" />
-    <AssemblyPart x:Name="MataliPhysics" Source="MataliPhysics.dll" />
     <AssemblyPart x:Name="NyARToolkit4.markersystem" Source="NyARToolkit4.markersystem.dll" />
   </Deployment.Parts>
 </Deployment>

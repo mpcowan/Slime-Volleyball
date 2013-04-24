@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace Slime_Engine
 {
-    class VolleyBall
+    class Net
     {
         // The GeometryNode to be used by GoblinXNA
         private GeometryNode geomNode;
@@ -27,7 +27,7 @@ namespace Slime_Engine
         // The sound to make on collisions
         private SoundEffect bounceSound;
 
-        public VolleyBall(float mass, float size, SoundEffect bounceSound)
+        public Net(float mass, float size, SoundEffect bounceSound)
         {
             createObj();
             scaleToSize(size);
@@ -59,13 +59,6 @@ namespace Slime_Engine
         public void translate(Vector3 translationVector)
         {
             transNode.Translation += translationVector;
-        }
-
-        public string nodeTranslationToString()
-        {
-            return  "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
-                    " Y: " + geomNode.WorldTransformation.Translation.Y.ToString() +
-                    " Z: " + geomNode.WorldTransformation.Translation.Z.ToString();
         }
 
         public string translationToString()
@@ -105,7 +98,7 @@ namespace Slime_Engine
             geomNode.Physics = new MataliObject(geomNode);
             geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Sphere;
             geomNode.Physics.Pickable = true;
-            ((MataliObject)geomNode.Physics).Restitution = 1.3f;
+            ((MataliObject)geomNode.Physics).Restitution = 1.5f;
             geomNode.Physics.Interactable = true;
             geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;

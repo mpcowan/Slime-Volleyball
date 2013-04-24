@@ -25,9 +25,6 @@ using GoblinXNA.UI;
 using GoblinXNA.UI.UI2D;
 using System.Windows.Media;
 using GoblinXNA.Physics.Matali;
-using GoblinXNA.Physics;
-using MataliPhysicsObject = Komires.MataliPhysics.PhysicsObject;
-using GoblinXNA.Sounds;
 #endregion
 
 namespace Slime_Engine
@@ -38,8 +35,6 @@ namespace Slime_Engine
         SpriteFont font;
         bool betterFPS = true;
 
-        SoundEffect bounceSound;
-
         CameraNode cameraNode;
         Viewport viewport;
 
@@ -48,8 +43,6 @@ namespace Slime_Engine
 
         float wandSize = 39f;
         float groundNodeSize = 55f;
-
-        VolleyBall vball;
 
         AR_Object ball;
         AR_Object player_slime;
@@ -79,9 +72,9 @@ namespace Slime_Engine
             // Initialize the scene graph
             scene = new Scene();
             scene.BackgroundColor = Color.Black;
-            scene.PhysicsEngine = new MataliPhysics();
-            scene.PhysicsEngine.Gravity = 40;
-            scene.PhysicsEngine.GravityDirection = new Vector3(0, 0, -1);
+
+	    scene.PhysicsEngine = new MataliPhysics();
+            scene.PhysicsEngine.Gravity = 30;
             ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 1 / 30f;
 
             // Set up the lights used in the scene
@@ -124,7 +117,7 @@ namespace Slime_Engine
         {
             // Create a directional light source
             LightSource lightSource = new LightSource();
-            lightSource.Direction = new Vector3(0, 0, -1);
+            lightSource.Direction = new Vector3(1, -1, -1);
             lightSource.Diffuse = Color.White.ToVector4();
             lightSource.Specular = new Vector4(0.6f, 0.6f, 0.6f, 1);
 
@@ -175,97 +168,44 @@ namespace Slime_Engine
             ground_marker_node = new MarkerNode(scene.MarkerTracker, "SlimeGroundArray.xml", NyARToolkitTracker.ComputationMethod.Average);
             scene.RootNode.AddChild(ground_marker_node);
 
-            //// Create some physical ground object
-            //AR_Object ground = new AR_Object("cube", true, 1f, null);
-            //// Perform initial manipulations
-            //ground.scaleToSize(groundNodeSize);
-            //ground.scaleX(4 * groundNodeSize);
-            //ground.scaleY(6 * groundNodeSize);
-            //ground.scaleZ(2f);
-
-            // Add it to the scene
-            //ground_marker_node.AddChild(ground.getTransformNode());
-
-            // Lets create the all important volleyball
-            vball = new VolleyBall(1f, groundNodeSize / 2f, bounceSound);
+            // Create some physical ground object
+            AR_Object ground = new AR_Object("cube");
             // Perform initial manipulations
-            vball.translate(new Vector3(0, 0, 4 * groundNodeSize));
-            // Add it to the scene
-            ground_marker_node.AddChild(vball.getTransformNode());
-
-            //// Start out by creating the volleyball
-            //ball = new AR_Object("sphere", false, 50f, bounceSound);
-            //// Perform initial manipulations
-            //ball.translate(new Vector3(0, 0, 5 * groundNodeSize));
-            //ball.scaleToSize(groundNodeSize / 2);
+            ground.scaleX(3 * groundNodeSize);
+            ground.scaleY(5 * groundNodeSize);
+            ground.scaleZ(2f);
 
             // Add it to the scene
-            //ground_marker_node.AddChild(ball.getTransformNode());
+            ground_marker_node.AddChild(ground.getTransformNode());
+
+            // Start out by creating the volleyball
+            ball = new AR_Object("sphere");
+
+            // Perform initial manipulations
+            ball.translate(new Vector3(0, 0, 0));
+            ball.scaleToSize(groundNodeSize);
+
+            // Add it to the scene
+            ground_marker_node.AddChild(ball.getTransformNode());
 
             // Create a marker node to track the paddle
             player_marker_node = new MarkerNode(scene.MarkerTracker, "id511.xml", NyARToolkitTracker.ComputationMethod.Average);
             scene.RootNode.AddChild(player_marker_node);
 
             // For simplicity sake, start with paddles
-            player_slime = new AR_Object("cube", true, 1000f, null);
+            player_slime = new AR_Object("cube");
             // Perform initial manipulations
             player_slime.translate(new Vector3(0, 0, 0));
-            //player_slime.scaleToSize(wandSize);
-            player_slime.scaleX(wandSize * 2);
-            player_slime.scaleY(wandSize * 2);
+            player_slime.scaleToSize(wandSize);
             player_slime.scaleZ(2f);
 
             // Add it to the scene
             player_marker_node.AddChild(player_slime.getTransformNode());
         }
 
-	public Vector3 getPlayerNormal(Vector3 contactPosition){
-	      Vector3 paddlePosition = player_marker_node.WorldTransformation.Translation;
-	      return contactPosition - paddlePosition;	      
-	}
-
-	public Vector3 getDeflectedVelocity(Vector3 initialVelocity, Vector3 playerNormal){
-	      Vector3 newVelocity = initialVelocity;
-	      Quaternion output = new Quaternion();
-	      output = Quaternion.CreateFromAxisAngle(playerNormal,180f);
-	      Vector3.Transform(newVelocity,output);
-	      return newVelocity;
-	}
-
-	private void BallCollideWithGround(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject){
-	      String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
-	      if(materialName.Equals("Ground")){
-		      SoundEffectInstance instance = Sound.Instance.PlaySoundEffect(bounceSound);
-	              Vector3 linearVelocity = Vector3.Zero;
-		      Vector3 contactPosition = Vector3.Zero;
-		      baseObject.MainWorldTransform.GetPosition(ref contactPosition);
-		      //[TODO]
-		      //if(!inBounds(contactPosition)) //lose
-	              baseObject.MainWorldTransform.GetLinearVelocity(ref linearVelocity);
-		      baseObject.MainWorldTransform.SetLinearVelocity(-1 * linearVelocity);
-	      }
-	}
-
-	private void BalCollideWithPlayer(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
-	{
-	    String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
-		if (materialName.Equals("Ground"))
-	        {
-		      Vector3 linearVelocity = Vector3.Zero;
-		      baseObject.MainWorldTransform.GetLinearVelocity(ref linearVelocity);
-		      Vector3 contactPosition = Vector3.Zero;
-		      baseObject.MainWorldTransform.GetPosition(ref contactPosition);
-		      Vector3 normal = getPlayerNormal(contactPosition);
-		      Vector3 newVelocity = getDeflectedVelocity(linearVelocity,normal);
-
-		      baseObject.MainWorldTransform.SetLinearVelocity( newVelocity);
-	        }
-	}
-
         private void LoadContent(ContentManager content)
         {
             font = content.Load<SpriteFont>("font");
-            bounceSound = content.Load<SoundEffect>("rubber_ball_01");
         }
 
         public void Dispose()
@@ -281,15 +221,11 @@ namespace Slime_Engine
         public void Draw(TimeSpan elapsedTime)
         {
             State.Device.Viewport = viewport;
-            //Draw our text string at top center of screen
-            UI2DRenderer.WriteText(new Vector2(0, 50), vball.nodeTranslationToString(), Color.White, font,
-                GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
             try
             {
                 scene.Draw(elapsedTime, false);
             }
             catch (Exception exp) { }
         }
-	
     }
 }

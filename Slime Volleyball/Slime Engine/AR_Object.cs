@@ -76,12 +76,12 @@ namespace Slime_Engine
             geomNode.Physics = new MataliObject(geomNode);
             geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.ConvexHull;
             geomNode.Physics.Pickable = true;
+            ((MataliObject)geomNode.Physics).Restitution = 1f;
             if (!stationary)
             {
                 geomNode.Physics.Interactable = true;
                 //((MataliObject)geomNode.Physics).CollisionStartCallback = ballCollision;
                 //((MataliObject)geomNode.Physics).CollisionEndCallback = ballCollisionDone;
-                ((MataliObject)geomNode.Physics).Restitution = 1f;
             }
             geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;

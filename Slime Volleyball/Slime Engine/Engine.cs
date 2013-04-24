@@ -219,48 +219,9 @@ namespace Slime_Engine
             player_marker_node.AddChild(player_slime.getTransformNode());
         }
 
-	public Vector3 getPlayerNormal(Vector3 contactPosition){
-	      Vector3 paddlePosition = player_marker_node.WorldTransformation.Translation;
-	      return contactPosition - paddlePosition;	      
-	}
 
-	public Vector3 getDeflectedVelocity(Vector3 initialVelocity, Vector3 playerNormal){
-	      Vector3 newVelocity = initialVelocity;
-	      Quaternion output = new Quaternion();
-	      output = Quaternion.CreateFromAxisAngle(playerNormal,180f);
-	      Vector3.Transform(newVelocity,output);
-	      return newVelocity;
-	}
 
-	private void BallCollideWithGround(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject){
-	      String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
-	      if(materialName.Equals("Ground")){
-		      SoundEffectInstance instance = Sound.Instance.PlaySoundEffect(bounceSound);
-	              Vector3 linearVelocity = Vector3.Zero;
-		      Vector3 contactPosition = Vector3.Zero;
-		      baseObject.MainWorldTransform.GetPosition(ref contactPosition);
-		      //[TODO]
-		      //if(!inBounds(contactPosition)) //lose
-	              baseObject.MainWorldTransform.GetLinearVelocity(ref linearVelocity);
-		      baseObject.MainWorldTransform.SetLinearVelocity(-1 * linearVelocity);
-	      }
-	}
 
-	private void BalCollideWithPlayer(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
-	{
-	    String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
-		if (materialName.Equals("Ground"))
-	        {
-		      Vector3 linearVelocity = Vector3.Zero;
-		      baseObject.MainWorldTransform.GetLinearVelocity(ref linearVelocity);
-		      Vector3 contactPosition = Vector3.Zero;
-		      baseObject.MainWorldTransform.GetPosition(ref contactPosition);
-		      Vector3 normal = getPlayerNormal(contactPosition);
-		      Vector3 newVelocity = getDeflectedVelocity(linearVelocity,normal);
-
-		      baseObject.MainWorldTransform.SetLinearVelocity( newVelocity);
-	        }
-	}
 
         private void LoadContent(ContentManager content)
         {

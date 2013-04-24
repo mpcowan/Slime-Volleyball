@@ -61,7 +61,8 @@ namespace Slime_Engine
 
             // Add physics properties
             geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.ConvexHull;
-            geomNode.Physics.Pickable = true;
+            //geomNode.Physics.Pickable = true;
+            geomNode.Physics.Collidable = true;
             geomNode.AddToPhysicsEngine = true;
 
             objRotation = Quaternion.Identity;

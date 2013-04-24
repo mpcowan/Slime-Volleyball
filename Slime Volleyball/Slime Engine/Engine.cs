@@ -40,6 +40,9 @@ namespace Slime_Engine
         MarkerNode ground_marker_node;
         MarkerNode player_marker_node;
 
+        float wandSize = 39f;
+        float groundNodeSize = 55f;
+
         AR_Object ball;
         AR_Object player_slime;
         AR_Object opponent_slime;
@@ -75,6 +78,8 @@ namespace Slime_Engine
             CreateCamera();
 
             SetupMarkerTracking(videoBrush);
+
+            createObjects();
 
             State.ShowNotifications = true;
             Notifier.Font = font;
@@ -132,6 +137,18 @@ namespace Slime_Engine
 
             // Add this video capture device to the scene so that it can be used for the marker tracker
             scene.AddVideoCaptureDevice(captureDevice);
+
+            NyARToolkitIdTracker tracker = new NyARToolkitIdTracker();
+
+            if (captureDevice.MarkerTrackingImageResizer != null)
+                tracker.InitTracker((int)(captureDevice.Width * captureDevice.MarkerTrackingImageResizer.ScalingFactor),
+                    (int)(captureDevice.Height * captureDevice.MarkerTrackingImageResizer.ScalingFactor),
+                    "camera_para.dat");
+            else
+                tracker.InitTracker(captureDevice.Width, captureDevice.Height, "camera_para.dat");
+
+            // Set the marker tracker to use for our scene
+            scene.MarkerTracker = tracker;
         }
 
         private void loadModels()
@@ -142,19 +159,30 @@ namespace Slime_Engine
 
         private void createObjects()
         {
+            // Create a marker node to track the ground array
+            ground_marker_node = new MarkerNode(scene.MarkerTracker, "SlimeGroundArray.xml", NyARToolkitTracker.ComputationMethod.Average);
+            scene.RootNode.AddChild(ground_marker_node);
+
             // Start out by creating the volleyball
             ball = new AR_Object("sphere");
             // Perform initial manipulations
             ball.translate(new Vector3(0, 0, 0));
-            ball.scaleToSize(1f);
+            ball.scaleToSize(groundNodeSize);
 
             // Add it to the scene
             ground_marker_node.AddChild(ball.getTransformNode());
+
+            // Create a marker node to track the paddle
+            player_marker_node = new MarkerNode(scene.MarkerTracker, "id511.xml", NyARToolkitTracker.ComputationMethod.Average);
+            scene.RootNode.AddChild(player_marker_node);
 
             // For simplicity sake, start with paddles
             player_slime = new AR_Object("cube");
             // Perform initial manipulations
             player_slime.translate(new Vector3(0, 0, 0));
+
+            // Add it to the scene
+            player_marker_node.AddChild(player_slime.getTransformNode());
         }
 
         private void LoadContent(ContentManager content)
@@ -175,7 +203,11 @@ namespace Slime_Engine
         public void Draw(TimeSpan elapsedTime)
         {
             State.Device.Viewport = viewport;
-            scene.Draw(elapsedTime, false);
+            try
+            {
+                scene.Draw(elapsedTime, false);
+            }
+            catch (Exception exp) { }
         }
     }
 }

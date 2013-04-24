@@ -175,16 +175,11 @@ namespace Slime_Engine
             ground_marker_node = new MarkerNode(scene.MarkerTracker, "SlimeGroundArray.xml", NyARToolkitTracker.ComputationMethod.Average);
             scene.RootNode.AddChild(ground_marker_node);
 
-            //// Create some physical ground object
-            //AR_Object ground = new AR_Object("cube", true, 1f, null);
-            //// Perform initial manipulations
-            //ground.scaleToSize(groundNodeSize);
-            //ground.scaleX(4 * groundNodeSize);
-            //ground.scaleY(6 * groundNodeSize);
-            //ground.scaleZ(2f);
+            // Create some physical ground object
+            Court court = new Court(float.MaxValue, new Vector3(4 * groundNodeSize, 6 * groundNodeSize, 2f), bounceSound);
 
             // Add it to the scene
-            //ground_marker_node.AddChild(ground.getTransformNode());
+            ground_marker_node.AddChild(court.getTransformNode());
 
             // Lets create the all important volleyball
             vball = new VolleyBall(1f, groundNodeSize / 2f, bounceSound);
@@ -192,15 +187,6 @@ namespace Slime_Engine
             vball.translate(new Vector3(0, 0, 4 * groundNodeSize));
             // Add it to the scene
             ground_marker_node.AddChild(vball.getTransformNode());
-
-            //// Start out by creating the volleyball
-            //ball = new AR_Object("sphere", false, 50f, bounceSound);
-            //// Perform initial manipulations
-            //ball.translate(new Vector3(0, 0, 5 * groundNodeSize));
-            //ball.scaleToSize(groundNodeSize / 2);
-
-            // Add it to the scene
-            //ground_marker_node.AddChild(ball.getTransformNode());
 
             // Create a marker node to track the paddle
             player_marker_node = new MarkerNode(scene.MarkerTracker, "id511.xml", NyARToolkitTracker.ComputationMethod.Average);

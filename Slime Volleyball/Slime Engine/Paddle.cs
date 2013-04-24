@@ -61,6 +61,13 @@ namespace Slime_Engine
             transNode.Translation += translationVector;
         }
 
+        public string nodeTranslationToString()
+        {
+            return "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
+                    " Y: " + geomNode.WorldTransformation.Translation.Y.ToString() +
+                    " Z: " + geomNode.WorldTransformation.Translation.Z.ToString();
+        }
+
         public string translationToString()
         {
             return  "X: " + transNode.Translation.X.ToString() +
@@ -96,23 +103,24 @@ namespace Slime_Engine
         private void applyPhysics(float mass)
         {
             geomNode.Physics = new MataliObject(geomNode);
+            geomNode.Physics.MaterialName = "paddle";
             geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Sphere;
             geomNode.Physics.Pickable = true;
-            ((MataliObject)geomNode.Physics).Restitution = 1.5f;
+            ((MataliObject)geomNode.Physics).Restitution = 1f;
             geomNode.Physics.Interactable = true;
             geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;
             geomNode.AddToPhysicsEngine = true;
-            ((MataliObject)geomNode.Physics).CollisionStartCallback = ballCollision;
-            ((MataliObject)geomNode.Physics).CollisionEndCallback = ballCollisionDone;
+            ((MataliObject)geomNode.Physics).CollisionStartCallback = paddleCollisionStart;
+            ((MataliObject)geomNode.Physics).CollisionEndCallback = paddleCollisionDone;
         }
 
-        private void ballCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        private void paddleCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
-            SoundEffectInstance instance = Sound.Instance.PlaySoundEffect(bounceSound);
+            //SoundEffectInstance instance = Sound.Instance.PlaySoundEffect(bounceSound);
         }
 
-        private void ballCollision(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        private void paddleCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
 
         }

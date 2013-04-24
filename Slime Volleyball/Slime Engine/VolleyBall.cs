@@ -104,9 +104,10 @@ namespace Slime_Engine
         private void applyPhysics(float mass)
         {
             geomNode.Physics = new MataliObject(geomNode);
+            geomNode.Physics.MaterialName = "ball";
             geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Sphere;
             geomNode.Physics.Pickable = true;
-            ((MataliObject)geomNode.Physics).Restitution = 1.3f;
+            ((MataliObject)geomNode.Physics).Restitution = 1f;
             geomNode.Physics.Interactable = true;
             geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;
@@ -122,14 +123,11 @@ namespace Slime_Engine
 
         private void ballCollision(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {     
-	          String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
-	          if (materialName.Equals("court"))
-	          {
-		            ballCollideWithGround(baseObject, collidingObject);
-            } 
-            else if(materialName.Equals("paddle")){
-	              ballCollideWithPlayer(baseObject, collidingObject);
-            }
+            String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
+            if (materialName.Equals("court"))
+                ballCollideWithGround(baseObject, collidingObject);
+            else if(materialName.Equals("paddle"))
+                ballCollideWithPlayer(baseObject, collidingObject);
         }
 
         public Vector3 getPlayerNormal(Vector3 contactPosition, MataliPhysicsObject collidingObject)

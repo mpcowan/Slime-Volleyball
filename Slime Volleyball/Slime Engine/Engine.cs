@@ -35,8 +35,14 @@ namespace Slime_Engine
         bool betterFPS = true;
 
         CameraNode cameraNode;
-
         Viewport viewport;
+
+        MarkerNode ground_marker_node;
+        MarkerNode player_marker_node;
+
+        AR_Object ball;
+        AR_Object player_slime;
+        AR_Object opponent_slime;
 
         public Engine() { }
 
@@ -126,6 +132,29 @@ namespace Slime_Engine
 
             // Add this video capture device to the scene so that it can be used for the marker tracker
             scene.AddVideoCaptureDevice(captureDevice);
+        }
+
+        private void loadModels()
+        {
+
+
+        }
+
+        private void createObjects()
+        {
+            // Start out by creating the volleyball
+            ball = new AR_Object("sphere");
+            // Perform initial manipulations
+            ball.translate(new Vector3(0, 0, 0));
+            ball.scaleToSize(1f);
+
+            // Add it to the scene
+            ground_marker_node.AddChild(ball.getTransformNode());
+
+            // For simplicity sake, start with paddles
+            player_slime = new AR_Object("cube");
+            // Perform initial manipulations
+            player_slime.translate(new Vector3(0, 0, 0));
         }
 
         private void LoadContent(ContentManager content)

@@ -7,7 +7,7 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
-      <Output>M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\font.xnb</Output>
+      <Output>M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\font.xnb</Output>
       <Time>2013-04-16T02:23:13.9341639-04:00</Time>
     </Item>
     <Item>
@@ -16,7 +16,7 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
-      <Output>M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\DebugFont.xnb</Output>
+      <Output>M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\DebugFont.xnb</Output>
       <Time>2013-04-16T03:14:54.319296-04:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
@@ -26,10 +26,10 @@
       <TargetProfile>Reach</TargetProfile>
       <BuildConfiguration>Debug</BuildConfiguration>
       <CompressContent>false</CompressContent>
-      <RootDirectory>M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Volleyball Engine\Slime Volleyball EngineContent\</RootDirectory>
-      <LoggerRootDirectory>M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Engine\</LoggerRootDirectory>
-      <IntermediateDirectory>M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Volleyball Engine\Slime Volleyball EngineContent\obj\Windows Phone\Debug\</IntermediateDirectory>
-      <OutputDirectory>M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\</OutputDirectory>
+      <RootDirectory>M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball Engine\Slime Volleyball EngineContent\</RootDirectory>
+      <LoggerRootDirectory>M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\</LoggerRootDirectory>
+      <IntermediateDirectory>M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball Engine\Slime Volleyball EngineContent\obj\Windows Phone\Debug\</IntermediateDirectory>
+      <OutputDirectory>M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>

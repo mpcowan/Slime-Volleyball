@@ -13,3 +13,18 @@ M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Engine\obj\W
 M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Slime Engine.dll
 M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Slime Engine.pdb
 M:\SkyDrive\Documents\Spring 2013\3D UI + AR\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\DebugFont.xnb
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\font.xnb
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\DebugFont.xnb
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Slime Engine.dll
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Slime Engine.pdb
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\GoblinXNA.dll
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\NyARToolkitCS.dll
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\NyARToolkit4.dll
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Nuclex.Fonts.dll
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\MataliPhysics.dll
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\NyARToolkit4.markersystem.dll
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\GoblinXNA.pdb
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\MataliPhysics.xml
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Slime Engine.dll
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Slime Engine.pdb

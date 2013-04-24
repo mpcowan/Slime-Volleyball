@@ -92,17 +92,17 @@ namespace Slime_Engine
         {
             geomNode = new GeometryNode(name);
 
-            if (name.Equals("cone"))
+            if (name.Equals("cube"))
             {
-                geomNode.Model = new Cylinder(1.5f, 0, 4f, 20);
+                geomNode.Model = new Box(20);
 
                 // Create a material to apply to the box model
-                Material coneMaterial = new Material();
-                coneMaterial.Diffuse = Color.Tomato.ToVector4();
-                coneMaterial.Specular = Color.White.ToVector4();
-                coneMaterial.SpecularPower = 5;
+                Material cubeMaterial = new Material();
+                cubeMaterial.Diffuse = Color.Tomato.ToVector4();
+                cubeMaterial.Specular = Color.White.ToVector4();
+                cubeMaterial.SpecularPower = 5;
 
-                geomNode.Material = coneMaterial;
+                geomNode.Material = cubeMaterial;
             }
             else if (name.Equals("sphere"))
             {
@@ -187,6 +187,32 @@ namespace Slime_Engine
                 scale = size / Math.Max(dimensions.Y, dimensions.Z);
             }
             transNode.Scale = new Vector3(scale, scale, scale);
+        }
+        public void scaleX(float size)
+        {
+            float scale = 1f;
+            Vector3 dimensions = getDimensions();
+            scale = size / dimensions.X;
+            Vector3 oldScales = transNode.Scale;
+            transNode.Scale = new Vector3(scale, oldScales.Y, oldScales.Z);
+        }
+
+        public void scaleY(float size)
+        {
+            float scale = 1f;
+            Vector3 dimensions = getDimensions();
+            scale = size / dimensions.Y;
+            Vector3 oldScales = transNode.Scale;
+            transNode.Scale = new Vector3(oldScales.X, scale, oldScales.Z);
+        }
+
+        public void scaleZ(float size)
+        {
+            float scale = 1f;
+            Vector3 dimensions = getDimensions();
+            scale = size / dimensions.Z;
+            Vector3 oldScales = transNode.Scale;
+            transNode.Scale = new Vector3(oldScales.X, oldScales.Y, scale);
         }
 
         public void translate(Vector3 translateAmounts)

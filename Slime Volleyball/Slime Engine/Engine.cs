@@ -163,6 +163,16 @@ namespace Slime_Engine
             ground_marker_node = new MarkerNode(scene.MarkerTracker, "SlimeGroundArray.xml", NyARToolkitTracker.ComputationMethod.Average);
             scene.RootNode.AddChild(ground_marker_node);
 
+            // Create some physical ground object
+            AR_Object ground = new AR_Object("cube");
+            // Perform initial manipulations
+            ground.scaleX(3 * groundNodeSize);
+            ground.scaleY(5 * groundNodeSize);
+            ground.scaleZ(2f);
+
+            // Add it to the scene
+            ground_marker_node.AddChild(ground.getTransformNode());
+
             // Start out by creating the volleyball
             ball = new AR_Object("sphere");
             // Perform initial manipulations
@@ -180,6 +190,8 @@ namespace Slime_Engine
             player_slime = new AR_Object("cube");
             // Perform initial manipulations
             player_slime.translate(new Vector3(0, 0, 0));
+            player_slime.scaleToSize(wandSize);
+            player_slime.scaleZ(2f);
 
             // Add it to the scene
             player_marker_node.AddChild(player_slime.getTransformNode());

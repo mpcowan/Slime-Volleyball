@@ -54,6 +54,9 @@ namespace Slime_Engine
         Paddle player_slime;
         //Slime player_slime;
 
+        Vector3 prior_wand_movement;
+        bool first_find = true;
+
         public Engine() { }
 
         public Texture2D VideoBackground
@@ -176,7 +179,7 @@ namespace Slime_Engine
             ground_marker_node.AddChild(court.getTransformNode());
 
             // Time to create the net
-            Net net = new Net(float.MaxValue, new Vector3(4 * groundNodeSize, 5f, groundNodeSize));
+            Net net = new Net(float.MaxValue, new Vector3(5 * groundNodeSize, 5f, groundNodeSize));
             // Initial translation
             net.translate(new Vector3(0, 0, 1f + (groundNodeSize / 2)));
             // Add it to the scene
@@ -194,11 +197,13 @@ namespace Slime_Engine
             scene.RootNode.AddChild(player_marker_node);
             
             // Create the slime for the player
+            //player_slime = new Slime(100f, wandSize);
             player_slime = new Paddle(float.MaxValue, new Vector3(wandSize * 1.5f, wandSize * 1.5f, 3f));
             // Initial translation
-            player_slime.translate(new Vector3(0, 0, 0));
+            player_slime.translate(new Vector3(0, -1 * groundNodeSize, 10));
             // Add it to the wand node
-            player_marker_node.AddChild(player_slime.getTransformNode());
+            //player_marker_node.AddChild(player_slime.getTransformNode());
+            ground_marker_node.AddChild(player_slime.getTransformNode());
         }
 
         private void LoadContent(ContentManager content)
@@ -221,27 +226,26 @@ namespace Slime_Engine
         {
             State.Device.Viewport = viewport;
 
-            Vector3 ground_node_translation = ground_marker_node.WorldTransformation.Translation;
-            ground_node_translation += vball.getWorldTransformationTranslation();
-            ground_node_translation.X = (int)ground_node_translation.X;
-            ground_node_translation.Y = (int)ground_node_translation.Y;
-            ground_node_translation.Z = (int)ground_node_translation.Z;
-
-            Vector3 wand_node_translation = player_marker_node.WorldTransformation.Translation;
-            wand_node_translation.Z += wandSize / 2;
-            wand_node_translation.X = (int)wand_node_translation.X;
-            wand_node_translation.Y = (int)wand_node_translation.Y;
-            wand_node_translation.Z = (int)wand_node_translation.Z;
-
-            Vector3 delta = ground_node_translation - wand_node_translation;
+            if (player_marker_node.MarkerFound)
+            {
+                Vector3 wand_node_translation = player_marker_node.WorldTransformation.Translation;
+                if (first_find)
+                {
+                    prior_wand_movement = wand_node_translation;
+                    first_find = false;
+                }
+                Vector3 delta = wand_node_translation - prior_wand_movement;
+                prior_wand_movement = wand_node_translation;
+                player_slime.translate(delta);
+            }
 
             //Draw our text string at top center of screen
-            UI2DRenderer.WriteText(new Vector2(0, 10), ground_node_translation.ToString(), Color.White, font,
-                GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
-            UI2DRenderer.WriteText(new Vector2(0, 50), wand_node_translation.ToString(), Color.White, font,
-                GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
-            UI2DRenderer.WriteText(new Vector2(0, 90), delta.ToString(), Color.White, font,
-                GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
+            //UI2DRenderer.WriteText(new Vector2(0, 10), ground_node_translation.ToString(), Color.White, font,
+            //    GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
+            //UI2DRenderer.WriteText(new Vector2(0, 50), wand_node_translation.ToString(), Color.White, font,
+            //    GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
+            //UI2DRenderer.WriteText(new Vector2(0, 90), delta.ToString(), Color.White, font,
+            //    GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
             try
             {
                 scene.Draw(elapsedTime, false);

@@ -56,6 +56,22 @@ namespace Slime_Engine
         public void translate(Vector3 translationVector)
         {
             transNode.Translation += translationVector;
+            float newX = transNode.Translation.X;
+            if (transNode.Translation.X > 110)
+                newX = 110f;
+            else if (transNode.Translation.X < -110)
+                newX = -110f;
+            float newY = transNode.Translation.Y;
+            if (transNode.Translation.Y > 150)
+                newY = 150f;
+            else if (transNode.Translation.Y < -150)
+                newY = -150f;
+            float newZ = transNode.Translation.Z;
+            if (transNode.Translation.Z > 30)
+                newZ = 30f;
+            else if (transNode.Translation.Z < 5)
+                newZ = 5f;
+            transNode.Translation = new Vector3(newX, newY, newZ);
         }
 
         public void rotate()

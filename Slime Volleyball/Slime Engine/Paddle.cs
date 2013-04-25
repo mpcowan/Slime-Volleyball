@@ -27,6 +27,7 @@ namespace Slime_Engine
         public Paddle(float mass, Vector3 size)
         {
             createObj(size);
+            transNode.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-20));
             applyPhysics(mass);
         }
 
@@ -51,11 +52,6 @@ namespace Slime_Engine
             transNode.Scale = new Vector3(scale, scale, scale);
         }
 
-        public void translate(Vector3 translationVector)
-        {
-            transNode.Translation += translationVector;
-        }
-
         public string nodeTranslationToString()
         {
             return  "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
@@ -75,6 +71,27 @@ namespace Slime_Engine
             return  "X: " + transNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + transNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + transNode.WorldTransformation.Translation.Z.ToString();
+        }
+
+        public void translate(Vector3 translationVector)
+        {
+            transNode.Translation += translationVector;
+            float newX = transNode.Translation.X;
+            if (transNode.Translation.X > 110)
+                newX = 110f;
+            else if (transNode.Translation.X < -110)
+                newX = -110f;
+            float newY = transNode.Translation.Y;
+            if (transNode.Translation.Y > 150)
+                newY = 150f;
+            else if (transNode.Translation.Y < -150)
+                newY = -150f;
+            float newZ = transNode.Translation.Z;
+            if (transNode.Translation.Z > 70)
+                newZ = 70f;
+            else if (transNode.Translation.Z < 10)
+                newZ = 10f;
+            transNode.Translation = new Vector3(newX, newY, newZ);
         }
 
         private void createObj(Vector3 size)

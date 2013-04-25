@@ -19,7 +19,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Rectangle Width="640" Height="480" HorizontalAlignment="Left">
+        <Rectangle Width="640" Height="480" HorizontalAlignment="Center">
             <Rectangle.Fill>
                 <VideoBrush x:Name="viewfinderBrush" />
             </Rectangle.Fill>

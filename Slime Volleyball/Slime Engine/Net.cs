@@ -24,15 +24,10 @@ namespace Slime_Engine
         // The TransformationNode to be used to manipulate the ball
         private TransformNode transNode;
 
-        // The sound to make on collisions
-        private SoundEffect bounceSound;
-
-        public Net(float mass, float size, SoundEffect bounceSound)
+        public Net(float mass, Vector3 dim)
         {
-            createObj();
-            scaleToSize(size);
+            createObj(dim);
             applyPhysics(mass);
-            this.bounceSound = bounceSound;
         }
 
         public TransformNode getTransformNode()
@@ -70,24 +65,24 @@ namespace Slime_Engine
 
         public string worldTransformToString()
         {
-            return "X: " + transNode.WorldTransformation.Translation.X.ToString() +
+            return  "X: " + transNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + transNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + transNode.WorldTransformation.Translation.Z.ToString();
         }
 
-        private void createObj()
+        private void createObj(Vector3 dim)
         {
-            geomNode = new GeometryNode("volleyball");
+            geomNode = new GeometryNode("net");
 
-            geomNode.Model = new Sphere(1, 20, 20);
+            geomNode.Model = new Box(dim.X, dim.Y, dim.Z);
 
-            // Create a material to apply to the ball
-            Material ballMaterial = new Material();
-            ballMaterial.Diffuse = Color.SteelBlue.ToVector4();
-            ballMaterial.Specular = Color.White.ToVector4();
-            ballMaterial.SpecularPower = 5;
+            // Create a material to apply to the court
+            Material netMaterial = new Material();
+            netMaterial.Diffuse = Color.Brown.ToVector4();
+            netMaterial.Specular = Color.White.ToVector4();
+            netMaterial.SpecularPower = 5;
 
-            geomNode.Material = ballMaterial;
+            geomNode.Material = netMaterial;
 
             transNode = new TransformNode();
             transNode.AddChild(geomNode);
@@ -96,23 +91,26 @@ namespace Slime_Engine
         private void applyPhysics(float mass)
         {
             geomNode.Physics = new MataliObject(geomNode);
-            geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Sphere;
+            geomNode.Physics.MaterialName = "net";
+            geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Box;
             geomNode.Physics.Pickable = true;
-            ((MataliObject)geomNode.Physics).Restitution = 1.5f;
-            geomNode.Physics.Interactable = true;
+            geomNode.Physics.Interactable = false;
+            ((MataliObject)geomNode.Physics).Restitution = 0;
+            ((MataliObject)geomNode.Physics).DynamicFriction = 0;
+            ((MataliObject)geomNode.Physics).StaticFriction = 0;
             geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;
             geomNode.AddToPhysicsEngine = true;
-            ((MataliObject)geomNode.Physics).CollisionStartCallback = ballCollision;
-            ((MataliObject)geomNode.Physics).CollisionEndCallback = ballCollisionDone;
+            ((MataliObject)geomNode.Physics).CollisionStartCallback = netCollisionStart;
+            ((MataliObject)geomNode.Physics).CollisionEndCallback = netCollisionDone;
         }
 
-        private void ballCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        private void netCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
-            SoundEffectInstance instance = Sound.Instance.PlaySoundEffect(bounceSound);
+            
         }
 
-        private void ballCollision(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        private void netCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
 
         }

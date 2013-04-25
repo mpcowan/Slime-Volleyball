@@ -27,6 +27,7 @@ namespace Slime_Engine
         public Slime(float mass, float size)
         {
             createObj();
+            rotate();
             scaleToSize(size);
             applyPhysics(mass);
         }
@@ -55,6 +56,11 @@ namespace Slime_Engine
         public void translate(Vector3 translationVector)
         {
             transNode.Translation += translationVector;
+        }
+
+        public void rotate()
+        {
+            transNode.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(90));
         }
 
         public string nodeTranslationToString()

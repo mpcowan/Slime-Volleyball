@@ -160,12 +160,6 @@ namespace Slime_Engine
             scene.MarkerTracker = tracker;
         }
 
-        private void loadModels()
-        {
-
-
-        }
-
         private void createObjects()
         {
             // Create a marker node to track the ground array
@@ -175,9 +169,16 @@ namespace Slime_Engine
             // Create some physical ground object
             Court court = new Court(float.MaxValue, new Vector3(4 * groundNodeSize, 6 * groundNodeSize, 2f));
             // Initial translation
-            court.translate(new Vector3(0, 0, 5f));
+            court.translate(new Vector3(0, 0, 1f));
             // Add it to the scene
             ground_marker_node.AddChild(court.getTransformNode());
+
+            // Time to create the net
+            Net net = new Net(float.MaxValue, new Vector3(4 * groundNodeSize, 5f, groundNodeSize));
+            // Initial translation
+            net.translate(new Vector3(0, 0, 1f + (groundNodeSize / 2)));
+            // Add it to the scene
+            ground_marker_node.AddChild(net.getTransformNode());
 
             // Lets create the all important volleyball
             vball = new VolleyBall(1f, groundNodeSize / 2f, bounceSound);
@@ -189,17 +190,14 @@ namespace Slime_Engine
             // Create a marker node to track the paddle
             player_marker_node = new MarkerNode(scene.MarkerTracker, "id511.xml", NyARToolkitTracker.ComputationMethod.Average);
             scene.RootNode.AddChild(player_marker_node);
-            /*
+            
             // Create the slime for the player
             player_slime = new Slime(100f, wandSize);
+            // Initial translation
+            player_slime.translate(new Vector3(-80, 20, -70));
             // Add it to the wand node
             player_marker_node.AddChild(player_slime.getTransformNode());
-            */
         }
-
-
-
-
 
         private void LoadContent(ContentManager content)
         {
@@ -229,6 +227,5 @@ namespace Slime_Engine
             }
             catch (Exception exp) { }
         }
-	
     }
 }

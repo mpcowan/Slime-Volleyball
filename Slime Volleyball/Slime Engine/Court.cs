@@ -26,10 +26,10 @@ namespace Slime_Engine
 
         public Court(float mass, Vector3 size)
         {
-            createObj();
-            scaleX(size.X);
-            scaleY(size.Y);
-            scaleZ(size.Z);
+            createObj(size);
+            //scaleX(size.X);
+            //scaleY(size.Y);
+            //scaleZ(size.Z);
             applyPhysics(mass);
         }
 
@@ -88,7 +88,7 @@ namespace Slime_Engine
 
         public string nodeTranslationToString()
         {
-            return "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
+            return  "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + geomNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + geomNode.WorldTransformation.Translation.Z.ToString();
         }
@@ -102,16 +102,16 @@ namespace Slime_Engine
 
         public string worldTransformToString()
         {
-            return "X: " + transNode.WorldTransformation.Translation.X.ToString() +
+            return  "X: " + transNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + transNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + transNode.WorldTransformation.Translation.Z.ToString();
         }
 
-        private void createObj()
+        private void createObj(Vector3 dim)
         {
             geomNode = new GeometryNode("court");
 
-            geomNode.Model = new Box(20);
+            geomNode.Model = new Box(dim.X, dim.Y, dim.Z);
 
             // Create a material to apply to the court
             Material courtMaterial = new Material();

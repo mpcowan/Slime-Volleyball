@@ -50,10 +50,7 @@ namespace Slime_Engine
         float groundNodeSize = 55f;
 
         VolleyBall vball;
-
-        AR_Object ball;
-        AR_Object player_slime;
-        AR_Object opponent_slime;
+        Slime player_slime;
 
         public Engine() { }
 
@@ -188,22 +185,16 @@ namespace Slime_Engine
             vball.translate(new Vector3(0, 0, 4 * groundNodeSize));
             // Add it to the scene
             ground_marker_node.AddChild(vball.getTransformNode());
-
+            
             // Create a marker node to track the paddle
             player_marker_node = new MarkerNode(scene.MarkerTracker, "id511.xml", NyARToolkitTracker.ComputationMethod.Average);
             scene.RootNode.AddChild(player_marker_node);
-
-            // For simplicity sake, start with paddles
-            player_slime = new AR_Object("cube", true, 1000f, null);
-            // Perform initial manipulations
-            player_slime.translate(new Vector3(0, 0, 0));
-            //player_slime.scaleToSize(wandSize);
-            player_slime.scaleX(wandSize * 2);
-            player_slime.scaleY(wandSize * 2);
-            player_slime.scaleZ(2f);
-
-            // Add it to the scene
+            /*
+            // Create the slime for the player
+            player_slime = new Slime(100f, wandSize);
+            // Add it to the wand node
             player_marker_node.AddChild(player_slime.getTransformNode());
+            */
         }
 
 
@@ -230,7 +221,7 @@ namespace Slime_Engine
         {
             State.Device.Viewport = viewport;
             //Draw our text string at top center of screen
-            UI2DRenderer.WriteText(new Vector2(0, 50), vball.nodeTranslationToString(), Color.White, font,
+            UI2DRenderer.WriteText(new Vector2(0, 50), vball.velocityToString(), Color.White, font,
                 GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
             try
             {

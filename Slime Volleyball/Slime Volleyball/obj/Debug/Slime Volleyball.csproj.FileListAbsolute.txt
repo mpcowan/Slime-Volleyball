@@ -231,3 +231,6 @@ M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\Slime Volleyball.dll
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\Slime Volleyball.pdb
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\XapCacheFile.xml
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\Bin\Debug\Content\blueslime.xnb
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\Bin\Debug\Content\greenslime.xnb
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\Bin\Debug\Content\redslime.xnb

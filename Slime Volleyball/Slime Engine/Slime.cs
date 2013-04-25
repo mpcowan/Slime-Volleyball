@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace Slime_Engine
 {
-    class Court
+    class Slime
     {
         // The GeometryNode to be used by GoblinXNA
         private GeometryNode geomNode;
@@ -24,12 +24,10 @@ namespace Slime_Engine
         // The TransformationNode to be used to manipulate the ball
         private TransformNode transNode;
 
-        public Court(float mass, Vector3 size)
+        public Slime(float mass, float size)
         {
             createObj();
-            scaleX(size.X);
-            scaleY(size.Y);
-            scaleZ(size.Z);
+            scaleToSize(size);
             applyPhysics(mass);
         }
 
@@ -54,33 +52,6 @@ namespace Slime_Engine
             transNode.Scale = new Vector3(scale, scale, scale);
         }
 
-        public void scaleX(float size)
-        {
-            float scale = 1f;
-            Vector3 dimensions = getDimensions();
-            scale = size / dimensions.X;
-            Vector3 oldScales = transNode.Scale;
-            transNode.Scale = new Vector3(scale, oldScales.Y, oldScales.Z);
-        }
-
-        public void scaleY(float size)
-        {
-            float scale = 1f;
-            Vector3 dimensions = getDimensions();
-            scale = size / dimensions.Y;
-            Vector3 oldScales = transNode.Scale;
-            transNode.Scale = new Vector3(oldScales.X, scale, oldScales.Z);
-        }
-
-        public void scaleZ(float size)
-        {
-            float scale = 1f;
-            Vector3 dimensions = getDimensions();
-            scale = size / dimensions.Z;
-            Vector3 oldScales = transNode.Scale;
-            transNode.Scale = new Vector3(oldScales.X, oldScales.Y, scale);
-        }
-
         public void translate(Vector3 translationVector)
         {
             transNode.Translation += translationVector;
@@ -88,7 +59,7 @@ namespace Slime_Engine
 
         public string nodeTranslationToString()
         {
-            return "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
+            return  "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + geomNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + geomNode.WorldTransformation.Translation.Z.ToString();
         }
@@ -102,24 +73,17 @@ namespace Slime_Engine
 
         public string worldTransformToString()
         {
-            return "X: " + transNode.WorldTransformation.Translation.X.ToString() +
+            return  "X: " + transNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + transNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + transNode.WorldTransformation.Translation.Z.ToString();
         }
 
         private void createObj()
         {
-            geomNode = new GeometryNode("court");
-
-            geomNode.Model = new Box(20);
-
-            // Create a material to apply to the court
-            Material courtMaterial = new Material();
-            courtMaterial.Diffuse = Color.WhiteSmoke.ToVector4();
-            courtMaterial.Specular = Color.White.ToVector4();
-            courtMaterial.SpecularPower = 5;
-
-            geomNode.Material = courtMaterial;
+            geomNode = new GeometryNode("slime");
+            ModelLoader loader = new ModelLoader();
+            geomNode.Model = (Model)loader.Load("", "redslime");
+            ((Model)geomNode.Model).UseInternalMaterials = true;
 
             transNode = new TransformNode();
             transNode.AddChild(geomNode);
@@ -128,8 +92,8 @@ namespace Slime_Engine
         private void applyPhysics(float mass)
         {
             geomNode.Physics = new MataliObject(geomNode);
-            geomNode.Physics.MaterialName = "court";
-            geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Box;
+            geomNode.Physics.MaterialName = "slime";
+            geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.ConvexHull;
             geomNode.Physics.Pickable = true;
             geomNode.Physics.Interactable = false;
             ((MataliObject)geomNode.Physics).Restitution = 0;
@@ -138,16 +102,16 @@ namespace Slime_Engine
             geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;
             geomNode.AddToPhysicsEngine = true;
-            ((MataliObject)geomNode.Physics).CollisionStartCallback = courtCollisionStart;
-            ((MataliObject)geomNode.Physics).CollisionEndCallback = courtCollisionDone;
+            ((MataliObject)geomNode.Physics).CollisionStartCallback = slimeCollisionStart;
+            ((MataliObject)geomNode.Physics).CollisionEndCallback = slimeCollisionDone;
         }
 
-        private void courtCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        private void slimeCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
             
         }
 
-        private void courtCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        private void slimeCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
 
         }

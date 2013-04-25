@@ -1,3 +1,6 @@
 Content\font.xnb
 Content\DebugFont.xnb
 Content\rubber_ball_01.xnb
+Content\blueslime.xnb
+Content\greenslime.xnb
+Content\redslime.xnb

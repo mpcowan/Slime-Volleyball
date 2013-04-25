@@ -75,6 +75,11 @@ namespace Slime_Engine
                     " Z: " + linear_velocity.Z.ToString();
         }
 
+        public Vector3 getWorldTransformationTranslation()
+        {
+            return geomNode.WorldTransformation.Translation;
+        }
+
         public string nodeTranslationToString()
         {
             return  "X: " + geomNode.WorldTransformation.Translation.X.ToString() +

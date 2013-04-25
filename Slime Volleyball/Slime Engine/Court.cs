@@ -27,9 +27,6 @@ namespace Slime_Engine
         public Court(float mass, Vector3 size)
         {
             createObj(size);
-            //scaleX(size.X);
-            //scaleY(size.Y);
-            //scaleZ(size.Z);
             applyPhysics(mass);
         }
 
@@ -115,7 +112,7 @@ namespace Slime_Engine
 
             // Create a material to apply to the court
             Material courtMaterial = new Material();
-            courtMaterial.Diffuse = Color.WhiteSmoke.ToVector4();
+            courtMaterial.Diffuse = Color.DarkGreen.ToVector4();
             courtMaterial.Specular = Color.White.ToVector4();
             courtMaterial.SpecularPower = 5;
 

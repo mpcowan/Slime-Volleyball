@@ -28,6 +28,7 @@ using GoblinXNA.Physics.Matali;
 using GoblinXNA.Physics;
 using MataliPhysicsObject = Komires.MataliPhysics.PhysicsObject;
 using GoblinXNA.Sounds;
+using GoblinXNA.UI.UI3D;
 #endregion
 
 namespace Slime_Engine
@@ -50,7 +51,8 @@ namespace Slime_Engine
         float groundNodeSize = 55f;
 
         VolleyBall vball;
-        Slime player_slime;
+        Paddle player_slime;
+        //Slime player_slime;
 
         public Engine() { }
 
@@ -62,8 +64,8 @@ namespace Slime_Engine
 
         public void Initialize(IGraphicsDeviceService service, ContentManager content, VideoBrush videoBrush)
         {
-            //viewport = new Viewport(0, 0, 640, 480);
-            viewport = new Viewport(0, 0, 750, 480);
+            viewport = new Viewport(0, 0, 640, 480);
+            //viewport = new Viewport(0, 0, 750, 480);
             viewport.MaxDepth = service.GraphicsDevice.Viewport.MaxDepth;
             viewport.MinDepth = service.GraphicsDevice.Viewport.MinDepth;
             service.GraphicsDevice.Viewport = viewport;
@@ -167,9 +169,9 @@ namespace Slime_Engine
             scene.RootNode.AddChild(ground_marker_node);
 
             // Create some physical ground object
-            Court court = new Court(float.MaxValue, new Vector3(4 * groundNodeSize, 6 * groundNodeSize, 2f));
+            Court court = new Court(float.MaxValue, new Vector3(5 * groundNodeSize, 7 * groundNodeSize, 4f));
             // Initial translation
-            court.translate(new Vector3(0, 0, 1f));
+            court.translate(new Vector3(0, 0, 2f));
             // Add it to the scene
             ground_marker_node.AddChild(court.getTransformNode());
 
@@ -183,7 +185,7 @@ namespace Slime_Engine
             // Lets create the all important volleyball
             vball = new VolleyBall(1f, groundNodeSize / 2f, bounceSound);
             // Perform initial manipulations
-            vball.translate(new Vector3(0, 0, 4 * groundNodeSize));
+            vball.translate(new Vector3(0, -2 * groundNodeSize, 4 * groundNodeSize));
             // Add it to the scene
             ground_marker_node.AddChild(vball.getTransformNode());
             
@@ -192,9 +194,9 @@ namespace Slime_Engine
             scene.RootNode.AddChild(player_marker_node);
             
             // Create the slime for the player
-            player_slime = new Slime(100f, wandSize);
+            player_slime = new Paddle(float.MaxValue, new Vector3(wandSize * 1.5f, wandSize * 1.5f, 3f));
             // Initial translation
-            player_slime.translate(new Vector3(-80, 20, -70));
+            player_slime.translate(new Vector3(0, 0, 0));
             // Add it to the wand node
             player_marker_node.AddChild(player_slime.getTransformNode());
         }
@@ -218,8 +220,27 @@ namespace Slime_Engine
         public void Draw(TimeSpan elapsedTime)
         {
             State.Device.Viewport = viewport;
+
+            Vector3 ground_node_translation = ground_marker_node.WorldTransformation.Translation;
+            ground_node_translation += vball.getWorldTransformationTranslation();
+            ground_node_translation.X = (int)ground_node_translation.X;
+            ground_node_translation.Y = (int)ground_node_translation.Y;
+            ground_node_translation.Z = (int)ground_node_translation.Z;
+
+            Vector3 wand_node_translation = player_marker_node.WorldTransformation.Translation;
+            wand_node_translation.Z += wandSize / 2;
+            wand_node_translation.X = (int)wand_node_translation.X;
+            wand_node_translation.Y = (int)wand_node_translation.Y;
+            wand_node_translation.Z = (int)wand_node_translation.Z;
+
+            Vector3 delta = ground_node_translation - wand_node_translation;
+
             //Draw our text string at top center of screen
-            UI2DRenderer.WriteText(new Vector2(0, 50), vball.velocityToString(), Color.White, font,
+            UI2DRenderer.WriteText(new Vector2(0, 10), ground_node_translation.ToString(), Color.White, font,
+                GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
+            UI2DRenderer.WriteText(new Vector2(0, 50), wand_node_translation.ToString(), Color.White, font,
+                GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
+            UI2DRenderer.WriteText(new Vector2(0, 90), delta.ToString(), Color.White, font,
                 GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
             try
             {

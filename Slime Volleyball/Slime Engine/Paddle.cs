@@ -24,15 +24,10 @@ namespace Slime_Engine
         // The TransformationNode to be used to manipulate the ball
         private TransformNode transNode;
 
-        // The sound to make on collisions
-        private SoundEffect bounceSound;
-
-        public Paddle(float mass, float size, SoundEffect bounceSound)
+        public Paddle(float mass, Vector3 size)
         {
-            createObj();
-            scaleToSize(size);
+            createObj(size);
             applyPhysics(mass);
-            this.bounceSound = bounceSound;
         }
 
         public TransformNode getTransformNode()
@@ -63,7 +58,7 @@ namespace Slime_Engine
 
         public string nodeTranslationToString()
         {
-            return "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
+            return  "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + geomNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + geomNode.WorldTransformation.Translation.Z.ToString();
         }
@@ -77,20 +72,20 @@ namespace Slime_Engine
 
         public string worldTransformToString()
         {
-            return "X: " + transNode.WorldTransformation.Translation.X.ToString() +
+            return  "X: " + transNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + transNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + transNode.WorldTransformation.Translation.Z.ToString();
         }
 
-        private void createObj()
+        private void createObj(Vector3 size)
         {
-            geomNode = new GeometryNode("volleyball");
+            geomNode = new GeometryNode("paddle");
 
-            geomNode.Model = new Box(10);
+            geomNode.Model = new Box(size.X, size.Y, size.Z);
 
             // Create a material to apply to the ball
             Material paddleMaterial = new Material();
-            paddleMaterial.Diffuse = Color.SteelBlue.ToVector4();
+            paddleMaterial.Diffuse = Color.Red.ToVector4();
             paddleMaterial.Specular = Color.White.ToVector4();
             paddleMaterial.SpecularPower = 5;
 

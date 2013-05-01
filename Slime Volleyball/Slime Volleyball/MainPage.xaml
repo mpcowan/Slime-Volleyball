@@ -27,7 +27,7 @@
 				<Button Content="1 Player" BorderThickness="0" Background="#FF2B742E" FontSize="37.333" Margin="0,0,47,0" Padding="25,10" Click="Button_Click" >
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="Click">
-							<ec:NavigateToPageAction TargetPage="/Game_Page.xaml"/>
+							<ec:NavigateToPageAction TargetPage="/Game_Page.xaml?type=single"/>
 						</i:EventTrigger>
 					</i:Interaction.Triggers>
 				</Button>

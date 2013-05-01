@@ -82,9 +82,9 @@ namespace Slime_Engine
 
         public string nodeTranslationToString()
         {
-            return  "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
-                    " Y: " + geomNode.WorldTransformation.Translation.Y.ToString() +
-                    " Z: " + geomNode.WorldTransformation.Translation.Z.ToString();
+            return  geomNode.WorldTransformation.Translation.X.ToString() +
+                    " " + geomNode.WorldTransformation.Translation.Y.ToString() +
+                    " " + geomNode.WorldTransformation.Translation.Z.ToString();
         }
 
         public string translationToString()

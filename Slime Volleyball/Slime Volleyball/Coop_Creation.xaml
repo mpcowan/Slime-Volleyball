@@ -27,10 +27,10 @@
             <StackPanel Orientation="Vertical" Margin="0,0,0,26" HorizontalAlignment="Center" VerticalAlignment="Bottom">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Your Game ID: " VerticalAlignment="Center" FontSize="32" />
-                    <TextBox Text="167" />
+                    <TextBox x:Name="gameID_tb" MinWidth="100" />
                 </StackPanel>
                 <TextBlock Text="Share this number with your friend so they can verse you" FontSize="24" Margin="0,17,0,0" />
-                <Button Content="Start Game" BorderThickness="0" Background="#FF762424" FontSize="37.333" Padding="25,15" Margin="0,50,0,0" />
+                <Button x:Name="start_btn" IsEnabled="False" Content="Start Game" BorderThickness="0" Background="#FF762424" FontSize="37.333" Padding="25,15" Margin="0,50,0,0" Click="start_btn_Click" />
             </StackPanel>
         </Grid>
     </Grid>

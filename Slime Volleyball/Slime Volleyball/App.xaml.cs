@@ -18,11 +18,16 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using Slime_Volleyball.Resources;
 using System.Windows.Markup;
+using System.Net.Sockets;
+using System.Threading;
+using System.Text;
 
 namespace Slime_Volleyball
 {
     public partial class App : Application, IServiceProvider
     {
+        public static Socket _socket = null;
+
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
         /// </summary>

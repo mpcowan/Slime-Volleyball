@@ -27,8 +27,12 @@ namespace Slime_Engine
         public Paddle(float mass, Vector3 size)
         {
             createObj(size);
-            transNode.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-20));
             applyPhysics(mass);
+        }
+
+        public void setRotation(Quaternion q)
+        {
+            transNode.Rotation = q;
         }
 
         public TransformNode getTransformNode()
@@ -54,9 +58,9 @@ namespace Slime_Engine
 
         public string nodeTranslationToString()
         {
-            return  "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
-                    " Y: " + geomNode.WorldTransformation.Translation.Y.ToString() +
-                    " Z: " + geomNode.WorldTransformation.Translation.Z.ToString();
+            return  geomNode.WorldTransformation.Translation.X.ToString() +
+                    " " + geomNode.WorldTransformation.Translation.Y.ToString() +
+                    " " + geomNode.WorldTransformation.Translation.Z.ToString();
         }
 
         public string translationToString()

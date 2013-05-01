@@ -29,12 +29,17 @@ using GoblinXNA.Physics;
 using MataliPhysicsObject = Komires.MataliPhysics.PhysicsObject;
 using GoblinXNA.Sounds;
 using GoblinXNA.UI.UI3D;
+using System.Net.Sockets;
+using System.Threading;
+using System.Text;
 #endregion
 
 namespace Slime_Engine
 {
     public class Engine
     {
+        enum game_types { single, leader, opponent };
+        int selected_game_type;
         Scene scene;
         SpriteFont font;
         bool betterFPS = true;
@@ -52,12 +57,31 @@ namespace Slime_Engine
 
         VolleyBall vball;
         Paddle player_slime;
+        Paddle opponent_slime;
         //Slime player_slime;
+        //Slime opponent_slime;
 
         Vector3 prior_wand_movement;
         bool first_find = true;
 
-        public Engine() { }
+        // Networking vars
+        Socket dataSocket;
+        bool sendData = true;
+        int seq = 0;
+
+        public Engine(string gameType, Socket dataSocket) 
+        {
+            this.dataSocket = dataSocket;
+
+            if (gameType.Equals("single"))
+                selected_game_type = (int)game_types.single;
+            else if (gameType.Equals("leader"))
+                selected_game_type = (int)game_types.leader;
+            else if (gameType.Equals("opponent"))
+                selected_game_type = (int)game_types.opponent;
+            else
+                selected_game_type = (int)game_types.single;
+        }
 
         public Texture2D VideoBackground
         {
@@ -200,10 +224,19 @@ namespace Slime_Engine
             //player_slime = new Slime(100f, wandSize);
             player_slime = new Paddle(float.MaxValue, new Vector3(wandSize * 1.5f, wandSize * 1.5f, 3f));
             // Initial translation
-            player_slime.translate(new Vector3(0, -1 * groundNodeSize, 10));
+            player_slime.translate(new Vector3(0, -1 * groundNodeSize, 12));
+            player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-20)));
             // Add it to the wand node
             //player_marker_node.AddChild(player_slime.getTransformNode());
             ground_marker_node.AddChild(player_slime.getTransformNode());
+
+            // Create the slime for the opponent
+            opponent_slime = new Paddle(float.MaxValue, new Vector3(wandSize  * 1.5f, wandSize * 1.5f, 3f));
+            // Initial translation
+            opponent_slime.translate(new Vector3(0, 2 * groundNodeSize, 12));
+            opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(20)));
+            // Add it to the scene
+            ground_marker_node.AddChild(opponent_slime.getTransformNode());
         }
 
         private void LoadContent(ContentManager content)
@@ -224,6 +257,11 @@ namespace Slime_Engine
 
         public void Draw(TimeSpan elapsedTime)
         {
+            if (sendData && selected_game_type != (int)game_types.single && dataSocket != null)
+                sendOutData();
+
+            sendData = !sendData;
+
             State.Device.Viewport = viewport;
 
             if (player_marker_node.MarkerFound)
@@ -251,6 +289,26 @@ namespace Slime_Engine
                 scene.Draw(elapsedTime, false);
             }
             catch (Exception exp) { }
+        }
+
+        private string getDataString()
+        {
+            seq++;
+            string dataString = seq.ToString();
+            if (selected_game_type == (int)game_types.leader)
+                dataString += " " + vball.nodeTranslationToString();
+            dataString += " " + player_slime.nodeTranslationToString();
+            return dataString;
+        }
+
+        private void sendOutData()
+        {
+            SocketAsyncEventArgs sendDataEventArg = new SocketAsyncEventArgs();
+            sendDataEventArg.RemoteEndPoint = dataSocket.RemoteEndPoint;
+            sendDataEventArg.UserToken = null;
+            byte[] payload = Encoding.UTF8.GetBytes(getDataString());
+            sendDataEventArg.SetBuffer(payload, 0, payload.Length);
+            dataSocket.SendAsync(sendDataEventArg);
         }
     }
 }

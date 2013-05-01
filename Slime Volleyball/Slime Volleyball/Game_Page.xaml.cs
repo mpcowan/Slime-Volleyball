@@ -77,8 +77,6 @@ namespace Slime_Volleyball
             timer.Update += OnUpdate;
             timer.Draw += OnDraw;
 
-            engine = new Engine();
-
             LayoutUpdated += new EventHandler(GamePage_LayoutUpdated);
 
             // Disable the auto-sleep mode so that the app will be kept alive even when the
@@ -103,6 +101,13 @@ namespace Slime_Volleyball
         {
             // Set the sharing mode of the graphics device to turn on XNA rendering
             SharedGraphicsDeviceManager.Current.GraphicsDevice.SetSharingMode(true);
+
+            string gameType = "";
+
+            if (NavigationContext.QueryString.TryGetValue("type", out gameType))
+                engine = new Engine(gameType, App._socket);
+            else
+                engine = new Engine("single", App._socket);
 
             engine.Initialize(SharedGraphicsDeviceManager.Current, contentManager, viewfinderBrush);
 

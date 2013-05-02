@@ -24,9 +24,9 @@ namespace Slime_Engine
         // The TransformationNode to be used to manipulate the ball
         private TransformNode transNode;
 
-        public Paddle(float mass, Vector3 size)
+        public Paddle(float mass, Vector3 size, Vector4 selected_color)
         {
-            createObj(size);
+            createObj(size, selected_color);
             applyPhysics(mass);
         }
 
@@ -79,7 +79,7 @@ namespace Slime_Engine
 
         public void setTranslation(Vector3 translationVector)
         {
-            transNode.Translation = translationVector;
+            transNode.Translation = new Vector3(translationVector.Y, -1 * translationVector.X, transNode.Translation.Z);
         }
 
         public void translate(Vector3 translationVector)
@@ -103,7 +103,7 @@ namespace Slime_Engine
             transNode.Translation = new Vector3(newX, newY, newZ);
         }
 
-        private void createObj(Vector3 size)
+        private void createObj(Vector3 size, Vector4 selected_color)
         {
             geomNode = new GeometryNode("paddle");
 
@@ -111,7 +111,7 @@ namespace Slime_Engine
 
             // Create a material to apply to the ball
             Material paddleMaterial = new Material();
-            paddleMaterial.Diffuse = Color.Red.ToVector4();
+            paddleMaterial.Diffuse = selected_color;
             paddleMaterial.Specular = Color.White.ToVector4();
             paddleMaterial.SpecularPower = 5;
 

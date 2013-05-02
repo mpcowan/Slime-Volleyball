@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Court.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="InvisibleWall.cs" />
     <Compile Include="Net.cs" />
     <Compile Include="Paddle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -31,13 +31,14 @@ namespace Slime_Engine
         // Keep track of your linear velocity
         private Vector3 linear_velocity;
 
-        float scaling_const = 90f;
+        float scaling_const = 95f;
 
-        public VolleyBall(float mass, float size, SoundEffect bounceSound)
+        public VolleyBall(float mass, float size, SoundEffect bounceSound, bool dummy)
         {
             createObj();
             scaleToSize(size);
-            applyPhysics(mass);
+            if (!dummy)
+                applyPhysics(mass);
             this.bounceSound = bounceSound;
             this.linear_velocity = Vector3.Zero;
         }

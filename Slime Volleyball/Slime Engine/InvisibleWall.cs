@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace Slime_Engine
 {
-    class Paddle
+    class InvisibleWall
     {
         // The GeometryNode to be used by GoblinXNA
         private GeometryNode geomNode;
@@ -24,21 +24,17 @@ namespace Slime_Engine
         // The TransformationNode to be used to manipulate the ball
         private TransformNode transNode;
 
-        // The sound to make on collisions
-        private SoundEffect bounceSound;
-
-        public Paddle(float mass, float size, SoundEffect bounceSound)
+        public InvisibleWall(float mass, Vector3 size)
         {
-            createObj();
-            scaleToSize(size);
+            createObj(size);
             applyPhysics(mass);
-            this.bounceSound = bounceSound;
         }
 
         public TransformNode getTransformNode()
         {
             return transNode;
         }
+
 
         public Vector3 getDimensions()
         {
@@ -56,6 +52,33 @@ namespace Slime_Engine
             transNode.Scale = new Vector3(scale, scale, scale);
         }
 
+        public void scaleX(float size)
+        {
+            float scale = 1f;
+            Vector3 dimensions = getDimensions();
+            scale = size / dimensions.X;
+            Vector3 oldScales = transNode.Scale;
+            transNode.Scale = new Vector3(scale, oldScales.Y, oldScales.Z);
+        }
+
+        public void scaleY(float size)
+        {
+            float scale = 1f;
+            Vector3 dimensions = getDimensions();
+            scale = size / dimensions.Y;
+            Vector3 oldScales = transNode.Scale;
+            transNode.Scale = new Vector3(oldScales.X, scale, oldScales.Z);
+        }
+
+        public void scaleZ(float size)
+        {
+            float scale = 1f;
+            Vector3 dimensions = getDimensions();
+            scale = size / dimensions.Z;
+            Vector3 oldScales = transNode.Scale;
+            transNode.Scale = new Vector3(oldScales.X, oldScales.Y, scale);
+        }
+
         public void translate(Vector3 translationVector)
         {
             transNode.Translation += translationVector;
@@ -70,7 +93,7 @@ namespace Slime_Engine
 
         public string translationToString()
         {
-            return  "X: " + transNode.Translation.X.ToString() +
+            return "X: " + transNode.Translation.X.ToString() +
                     " Y: " + transNode.Translation.Y.ToString() +
                     " Z: " + transNode.Translation.Z.ToString();
         }
@@ -82,19 +105,19 @@ namespace Slime_Engine
                     " Z: " + transNode.WorldTransformation.Translation.Z.ToString();
         }
 
-        private void createObj()
+        private void createObj(Vector3 dim)
         {
-            geomNode = new GeometryNode("volleyball");
+            geomNode = new GeometryNode("wall");
 
-            geomNode.Model = new Box(10);
+            geomNode.Model = new Box(dim.X, dim.Y, dim.Z);
 
-            // Create a material to apply to the ball
-            Material paddleMaterial = new Material();
-            paddleMaterial.Diffuse = Color.SteelBlue.ToVector4();
-            paddleMaterial.Specular = Color.White.ToVector4();
-            paddleMaterial.SpecularPower = 5;
+            // Create a material to apply to the wall
+            Material wallMaterial = new Material();
+            wallMaterial.Diffuse = new Vector4(0, 0, 0, 0);
+            wallMaterial.Specular = new Vector4(0, 0, 0, 0);
+            wallMaterial.SpecularPower = 5;
 
-            geomNode.Material = paddleMaterial;
+            geomNode.Material = wallMaterial;
 
             transNode = new TransformNode();
             transNode.AddChild(geomNode);
@@ -103,7 +126,7 @@ namespace Slime_Engine
         private void applyPhysics(float mass)
         {
             geomNode.Physics = new MataliObject(geomNode);
-            geomNode.Physics.MaterialName = "paddle";
+            geomNode.Physics.MaterialName = "wall";
             geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Box;
             geomNode.Physics.Pickable = true;
             geomNode.Physics.Interactable = false;
@@ -113,16 +136,16 @@ namespace Slime_Engine
             geomNode.Physics.Mass = mass;
             geomNode.Physics.Collidable = true;
             geomNode.AddToPhysicsEngine = true;
-            ((MataliObject)geomNode.Physics).CollisionStartCallback = paddleCollisionStart;
-            ((MataliObject)geomNode.Physics).CollisionEndCallback = paddleCollisionDone;
+            ((MataliObject)geomNode.Physics).CollisionStartCallback = wallCollisionStart;
+            ((MataliObject)geomNode.Physics).CollisionEndCallback = wallCollisionDone;
         }
 
-        private void paddleCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        private void wallCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
 
         }
 
-        private void paddleCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
+        private void wallCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
 
         }

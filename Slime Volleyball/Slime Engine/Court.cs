@@ -24,10 +24,23 @@ namespace Slime_Engine
         // The TransformationNode to be used to manipulate the ball
         private TransformNode transNode;
 
+        private bool point_scored;
+
         public Court(float mass, Vector3 size)
         {
+            point_scored = false;
             createObj(size);
             applyPhysics(mass);
+        }
+
+        public bool is_point_scored()
+        {
+            return point_scored;
+        }
+
+        public void reset_point_scored()
+        {
+            point_scored = false;
         }
 
         public TransformNode getTransformNode()
@@ -141,7 +154,7 @@ namespace Slime_Engine
 
         private void courtCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
-            
+            point_scored = true;
         }
 
         private void courtCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)

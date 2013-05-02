@@ -32,6 +32,7 @@ using GoblinXNA.UI.UI3D;
 using System.Net.Sockets;
 using System.Threading;
 using System.Text;
+using System.Net;
 #endregion
 
 namespace Slime_Engine
@@ -65,13 +66,40 @@ namespace Slime_Engine
         bool first_find = true;
 
         // Networking vars
-        Socket dataSocket;
+        const int listening_port = 9002;
+        string opponent_ip;
+        string gameID;
+        Socket receiverSocket;
+        Socket senderSocket;
         bool sendData = true;
         int seq = 0;
+        int receive_seq = 0;
 
-        public Engine(string gameType, Socket dataSocket) 
+        public Engine(string gameType, string gameID, string opponent_ip) 
         {
-            this.dataSocket = dataSocket;
+            this.gameID = gameID;
+            if (this.gameID == "")
+                this.gameID = "0";
+            this.opponent_ip = opponent_ip;
+            if (!gameType.Equals("single"))
+            {
+                receiverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                senderSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                SocketAsyncEventArgs sendDataEventArg = new SocketAsyncEventArgs();
+                sendDataEventArg.RemoteEndPoint = new DnsEndPoint("160.39.234.102", 9002);
+                byte[] payload = Encoding.UTF8.GetBytes("receiver initializing");
+                sendDataEventArg.SetBuffer(payload, 0, payload.Length);
+                receiverSocket.SendToAsync(sendDataEventArg);
+                
+                Thread.Sleep(1200);
+
+                SocketAsyncEventArgs receiveEventArg = new SocketAsyncEventArgs();
+                receiveEventArg.RemoteEndPoint = new IPEndPoint(IPAddress.Any, listening_port);
+                receiveEventArg.SetBuffer(new byte[1024], 0, 1024);
+                receiveEventArg.Completed += receiveEventArg_Completed;
+                receiverSocket.ReceiveFromAsync(receiveEventArg);
+            }
 
             if (gameType.Equals("single"))
                 selected_game_type = (int)game_types.single;
@@ -81,6 +109,78 @@ namespace Slime_Engine
                 selected_game_type = (int)game_types.opponent;
             else
                 selected_game_type = (int)game_types.single;
+        }
+
+        void receiveEventArg_Completed(object sender, SocketAsyncEventArgs e)
+        {
+            if (e.SocketError == SocketError.Success)
+            {
+                // Retrieve the data from the buffer
+                string response = Encoding.UTF8.GetString(e.Buffer, e.Offset, e.BytesTransferred);
+                response = response.Trim('\0');
+                string[] response_parts = response.Split(' ');
+
+                if (selected_game_type == (int)game_types.leader)
+                {
+                    if (response_parts.Length == 4)
+                    {
+                        try
+                        {
+                            int seq_num = Convert.ToInt32(response_parts[0]);
+                            float opp_x = (float)Convert.ToDouble(response_parts[1]);
+                            float opp_y = (float)Convert.ToDouble(response_parts[2]);
+                            float opp_z = (float)Convert.ToDouble(response_parts[3]);
+
+                            if (seq_num > receive_seq)
+                            {
+                                receive_seq = seq_num;
+                                opponent_slime.setTranslation(new Vector3(opp_x, opp_y, opp_z));
+                            }
+                        }
+                        catch (Exception exp)
+                        {
+
+                        }
+                    }
+                }
+                else if (selected_game_type == (int)game_types.opponent)
+                {
+                    if (response_parts.Length == 7)
+                    {
+                        try
+                        {
+                            int seq_num = Convert.ToInt32(response_parts[0]);
+                            float ball_x = (float)Convert.ToDouble(response_parts[1]);
+                            float ball_y = (float)Convert.ToDouble(response_parts[2]);
+                            float ball_z = (float)Convert.ToDouble(response_parts[3]);
+                            float opp_x = (float)Convert.ToDouble(response_parts[4]);
+                            float opp_y = (float)Convert.ToDouble(response_parts[5]);
+                            float opp_z = (float)Convert.ToDouble(response_parts[6]);
+
+                            if (seq_num > receive_seq)
+                            {
+                                receive_seq = seq_num;
+                                vball.setTranslation(new Vector3(ball_x, ball_y, ball_z));
+                                opponent_slime.setTranslation(new Vector3(opp_x, opp_y, opp_z));
+                            }
+                        }
+                        catch (Exception exp)
+                        {
+
+                        }
+                    }
+                }
+            }
+            continueListening();
+        }
+
+        private void continueListening()
+        {
+            SocketAsyncEventArgs receiveEventArg = new SocketAsyncEventArgs();
+            receiveEventArg.RemoteEndPoint = new IPEndPoint(IPAddress.Any, listening_port);
+            receiveEventArg.SetBuffer(new byte[1024], 0, 1024);
+            receiveEventArg.Completed += receiveEventArg_Completed;
+            receiverSocket.ReceiveFromAsync(receiveEventArg);
         }
 
         public Texture2D VideoBackground
@@ -257,8 +357,11 @@ namespace Slime_Engine
 
         public void Draw(TimeSpan elapsedTime)
         {
-            if (sendData && selected_game_type != (int)game_types.single && dataSocket != null)
-                sendOutData();
+            if (ground_marker_node.MarkerFound)
+            {
+                if (sendData && selected_game_type != (int)game_types.single && senderSocket != null)
+                    sendOutData();
+            }
 
             sendData = !sendData;
 
@@ -294,7 +397,8 @@ namespace Slime_Engine
         private string getDataString()
         {
             seq++;
-            string dataString = seq.ToString();
+            string dataString = gameID + " " + opponent_ip + " " + seq.ToString();
+            //string dataString = gameID + " " + "self" + " " + seq.ToString();
             if (selected_game_type == (int)game_types.leader)
                 dataString += " " + vball.nodeTranslationToString();
             dataString += " " + player_slime.nodeTranslationToString();
@@ -304,11 +408,10 @@ namespace Slime_Engine
         private void sendOutData()
         {
             SocketAsyncEventArgs sendDataEventArg = new SocketAsyncEventArgs();
-            sendDataEventArg.RemoteEndPoint = dataSocket.RemoteEndPoint;
-            sendDataEventArg.UserToken = null;
+            sendDataEventArg.RemoteEndPoint = new DnsEndPoint("160.39.234.102", 9002);
             byte[] payload = Encoding.UTF8.GetBytes(getDataString());
             sendDataEventArg.SetBuffer(payload, 0, payload.Length);
-            dataSocket.SendAsync(sendDataEventArg);
+            senderSocket.SendToAsync(sendDataEventArg);
         }
     }
 }

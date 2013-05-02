@@ -93,6 +93,7 @@ namespace Slime_Volleyball
                     {
                         gameID_tb.Text = response;
                         MessageBox.Show("Send your game room ID: " + response + " to your friend. Once they join the game you will be able to start the game", "Invite Your Friend", MessageBoxButton.OK);
+                        App.gameID = response;
                     });
                     SocketAsyncEventArgs waitForServerOK = new SocketAsyncEventArgs();
                     waitForServerOK.RemoteEndPoint = App._socket.RemoteEndPoint;
@@ -116,8 +117,13 @@ namespace Slime_Volleyball
         {
             if (e.SocketError == SocketError.Success)
             {
+                // Retrieve the data from the buffer
+                string response = Encoding.UTF8.GetString(e.Buffer, e.Offset, e.BytesTransferred);
+                response = response.Trim('\0');
+
                 Dispatcher.BeginInvoke(() =>
                 {
+                    App.opponent_ip = response;
                     start_btn.IsEnabled = true;
                 });
             }

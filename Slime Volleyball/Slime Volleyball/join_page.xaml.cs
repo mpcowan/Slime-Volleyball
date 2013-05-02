@@ -100,11 +100,14 @@ namespace Slime_Volleyball
                 // Retrieve the data from the buffer
                 string response = Encoding.UTF8.GetString(e.Buffer, e.Offset, e.BytesTransferred);
                 response = response.Trim('\0');
-                if (response.Equals("SUCCESS"))
+
+                if (!response.Equals("ERROR"))
                 {
                     // Everything is a go on the serverside, it is time to start the game
                     Dispatcher.BeginInvoke(() =>
                     {
+                        App.gameID = gameID_tb.Text;
+                        App.opponent_ip = response;
                         NavigationService.Navigate(new Uri("/Game_Page.xaml?type=opponent", UriKind.Relative));
                     });
                 }

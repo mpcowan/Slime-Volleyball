@@ -58,9 +58,9 @@ namespace Slime_Engine
 
         public string nodeTranslationToString()
         {
-            return  geomNode.WorldTransformation.Translation.X.ToString() +
-                    " " + geomNode.WorldTransformation.Translation.Y.ToString() +
-                    " " + geomNode.WorldTransformation.Translation.Z.ToString();
+            return geomNode.WorldTransformation.Translation.X.ToString("0.00") +
+                    " " + geomNode.WorldTransformation.Translation.Y.ToString("0.00") +
+                    " " + geomNode.WorldTransformation.Translation.Z.ToString("0.00");
         }
 
         public string translationToString()
@@ -75,6 +75,11 @@ namespace Slime_Engine
             return  "X: " + transNode.WorldTransformation.Translation.X.ToString() +
                     " Y: " + transNode.WorldTransformation.Translation.Y.ToString() +
                     " Z: " + transNode.WorldTransformation.Translation.Z.ToString();
+        }
+
+        public void setTranslation(Vector3 translationVector)
+        {
+            transNode.Translation = translationVector;
         }
 
         public void translate(Vector3 translationVector)

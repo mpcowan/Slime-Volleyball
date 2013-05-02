@@ -27,6 +27,8 @@ namespace Slime_Volleyball
     public partial class App : Application, IServiceProvider
     {
         public static Socket _socket = null;
+        public static string gameID = "";
+        public static string opponent_ip = "";
 
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.

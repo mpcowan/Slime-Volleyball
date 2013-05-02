@@ -102,12 +102,15 @@ namespace Slime_Volleyball
             // Set the sharing mode of the graphics device to turn on XNA rendering
             SharedGraphicsDeviceManager.Current.GraphicsDevice.SetSharingMode(true);
 
+            if (App._socket != null)
+                App._socket.Close();
+
             string gameType = "";
 
             if (NavigationContext.QueryString.TryGetValue("type", out gameType))
-                engine = new Engine(gameType, App._socket);
+                engine = new Engine(gameType, App.gameID, App.opponent_ip);
             else
-                engine = new Engine("single", App._socket);
+                engine = new Engine("single", "0", App.opponent_ip);
 
             engine.Initialize(SharedGraphicsDeviceManager.Current, contentManager, viewfinderBrush);
 

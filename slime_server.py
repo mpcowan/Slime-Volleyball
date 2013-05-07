@@ -1,4 +1,4 @@
-from time import time, sleep
+from time import sleep
 from socket import *
 import thread
 
@@ -9,19 +9,19 @@ PORT = 9001
 availableKeys = [ 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ]
 activeKeyTable = {}
 
-def createSessionKey(clientsock):
+def createSessionKey(addr):
   if len(availableKeys) != 0:
     key = availableKeys.pop()
-    activeKeyTable[key] = (clientsock, None)
+    activeKeyTable[key] = (str(addr[0]), None)
     return key
   else:
     return None
 
-def joinSession(key, clientsock):
+def joinSession(key, addr):
   if key in activeKeyTable:
     creator, joiner = activeKeyTable[key]
     if joiner is None:
-      activeKeyTable[key] = (creator, clientsock)
+      activeKeyTable[key] = (creator, str(addr[0]))
       return True
     else:
       return False
@@ -38,14 +38,6 @@ def hasOpponent(key):
   else:
     return False
 
-def forwardData(key, data, is_creator):
-  if key in activeKeyTable:
-    creator, joiner = activeKeyTable[key]
-    if is_creator and joiner != None:
-      joiner.send(data)
-    elif not is_creator and creator != None:
-      creator.send(data)
-
 def releaseSessionKey(key):
   if key in activeKeyTable:
     del activeKeyTable[key]
@@ -53,39 +45,40 @@ def releaseSessionKey(key):
 
 def handler(clientsock,addr):
   client_key = 0
-  creator = False
-  while 1:
+  while True:
     data = clientsock.recv(BUFF)
     if not data:
       break
     print repr(addr) + ' recv:' + repr(data)
     if str(data) == "create":
-      client_key = createSessionKey(clientsock)
+      client_key = createSessionKey(addr)
       if client_key is None:
+        print "To creator: ERROR"
         clientsock.send("ERROR")
       else:
-        creator = True
         clientsock.send(str(client_key))
-        while 1:
-          sleep(2)
+        print "To Creator: " + str(client_key)
+        while True:
+          sleep(1)
           if hasOpponent(client_key):
-            clientsock.send("ready")
+            print "To creator: " + activeKeyTable[client_key][1]
+            clientsock.send(activeKeyTable[client_key][1])
             break
     elif str(data).startswith("join"):
       try:
         client_key = int(str(data).split(" ")[-1])
-        if joinSession(client_key, clientsock):
-          clientsock.send("SUCCESS")
+        if joinSession(client_key, addr):
+          print "To joiner: " + activeKeyTable[client_key][0]
+          clientsock.send(activeKeyTable[client_key][0])
         else:
           clientsock.send("ERROR")
       except:
         clientsock.send("ERROR")
-    else:
-      forwardData(client_key, data, creator)
-    print repr(addr) + ' sent:' + repr(response(data))
+    print repr(addr) + ' sent: ' + str(data)
     if "close" == data.rstrip():
       break
   clientsock.close()
+  sleep(10)
   releaseSessionKey(client_key)
   print addr, "- closed connection" #log on console
 

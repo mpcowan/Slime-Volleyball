@@ -52,6 +52,7 @@ namespace Slime_Engine
         const float GRAVITY = 30f;
         const int SYSTEM_ID = 1;
         const int PLAYER_ID = 0;
+        const int WINNING_SCORE = 7;
         Vector3 PLAYER_BALL_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
         Vector3 OPPONENT_BALL_START = new Vector3(0, 2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
         Vector3 PLAYER_SLIME_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, SLIME_HEIGHT);
@@ -295,6 +296,11 @@ namespace Slime_Engine
         }
 
         public void quit()
+        {
+
+        }
+
+        private void announce_winner(int winner)
         {
 
         }
@@ -570,14 +576,18 @@ namespace Slime_Engine
                     playerOneScore++;
                 else
                     playerTwoScore++;
+                if (playerOneScore == WINNING_SCORE)
+                    announce_winner(PLAYER_ID);
+                if (playerTwoScore == WINNING_SCORE)
+                    announce_winner(SYSTEM_ID);
                 resetRound();
             }
 
             writeText(playerOneScore + " - " + playerTwoScore);
             if (player_marker_node.MarkerFound)
-                writeText("I CAN SEE YOU!", 40);
+                writeText("PADDLE FOUND", 40);
             else
-                writeText("WHERE THE FUCK?", 40);
+                writeText("PADDLE LOST...", 40);
             try
             {
                 scene.Draw(elapsedTime, false);

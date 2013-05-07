@@ -156,27 +156,44 @@ namespace Slime_Volleyball
 
         void help_btn_Click(object sender, EventArgs e)
         {
-            hapticFeedback(100);
+            if (!engine.isPaused(0))
+            {
+                pause_btn.Text = "Resume";
+                pause_btn.IconUri = new Uri("Images/appbar.control.play.png", UriKind.Relative);
+                engine.pause(0);
+            }
+            MessageBox.Show("TODO, add all of the help text...", "Help + Info", MessageBoxButton.OK);
         }
 
         void quit_btn_Click(object sender, EventArgs e)
         {
-            hapticFeedback(300);
+            if (!engine.isPaused(0))
+            {
+                Dispatcher.BeginInvoke(() =>
+                    {
+                        pause_btn.Text = "Resume";
+                        pause_btn.IconUri = new Uri("Images/appbar.control.play.png", UriKind.Relative);
+                        engine.pause(0);
+                    });
+            }
+            MessageBoxResult user_resp = MessageBox.Show("Quit the game?", "Quit?", MessageBoxButton.OKCancel);
+            if (user_resp == MessageBoxResult.OK)
+                engine.quit();
         }
 
         void pause_btn_Click(object sender, EventArgs e)
         {
-            if (engine.isPaused())
+            if (engine.isPaused(0))
             {
                 pause_btn.Text = "Pause";
                 pause_btn.IconUri = new Uri("Images/appbar.control.pause.png", UriKind.Relative);
-                engine.resume();
+                engine.resume(0);
             }
             else
             {
                 pause_btn.Text = "Resume";
                 pause_btn.IconUri = new Uri("Images/appbar.control.play.png", UriKind.Relative);
-                engine.pause();
+                engine.pause(0);
             }
         }
 

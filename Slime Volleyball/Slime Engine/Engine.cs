@@ -50,6 +50,8 @@ namespace Slime_Engine
         const float BALL_INIT_HEIGHT = 4 * GROUND_MARKER_SIZE;
         const float PHYSICS_SPEED = 1 / 15f;
         const float GRAVITY = 30f;
+        const int SYSTEM_ID = 1;
+        const int PLAYER_ID = 0;
         Vector3 PLAYER_BALL_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
         Vector3 OPPONENT_BALL_START = new Vector3(0, 2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
         Vector3 PLAYER_SLIME_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, SLIME_HEIGHT);
@@ -61,7 +63,8 @@ namespace Slime_Engine
         Scene scene;
         SpriteFont font;
         bool betterFPS = true;
-        bool paused = true;
+        bool player_paused = true;
+        bool system_paused = false;
 
         SoundEffect bounceSound;
 
@@ -94,6 +97,7 @@ namespace Slime_Engine
         bool sendData = true;
         int seq = 0;
         int receive_seq = 0;
+        int bytes_sent = 0;
         #endregion NETWORKING_VARS
 
         public Engine(string gameType, string gameID, string opponent_ip) 
@@ -227,42 +231,72 @@ namespace Slime_Engine
             sendDataEventArg.RemoteEndPoint = new DnsEndPoint(listening_ip, listening_port);
             byte[] payload = Encoding.UTF8.GetBytes(getDataString());
             sendDataEventArg.SetBuffer(payload, 0, payload.Length);
+            bytes_sent += payload.Length;
             senderSocket.SendToAsync(sendDataEventArg);
         }
 
         #endregion NETWORKING_METHODS
 
         /// <summary>
-        /// Stops running physics, which should stop the ball.
+        /// Stops the physics engine which will effectively pause the game.
         /// </summary>
-        public void pause()
+        /// <param name="type">Pause requested by player (0) or by system (1)</param>
+        public void pause(int type)
         {
-            if (!paused)
+            if (type == 0)
             {
-                paused = true;
-                ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 0f;
+                if (!player_paused)
+                {
+                    player_paused = true;
+                    ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 0f;
+                }
+            }
+            else if (type == 1)
+            {
+                if (!system_paused)
+                {
+                    system_paused = true;
+                    ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 0f;
+                }
             }
         }
 
         /// <summary>
-        /// Resumes running physics, which should reanimate the ball.
+        /// Resumes the physics engine which will effectively resume the game.
         /// </summary>
-        public void resume()
+        /// <param name="type">Resume requested by player (0) or by system (1)</param>
+        public void resume(int type)
         {
-            if (paused)
+            if (type == 0)
             {
-                paused = false;
-                ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
+                if (player_paused)
+                {
+                    player_paused = false;
+                    ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
+                }
+            }
+            else if (type == 1)
+            {
+                if (system_paused)
+                {
+                    system_paused = false;
+                    if (!player_paused)
+                        ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
+                }
             }
         }
-
-        /// <summary>
-        /// Getter method for the paused property of the engine.
-        /// </summary>
-        /// <returns></returns>
-        public bool isPaused()
+        
+        public bool isPaused(int type)
         {
-            return paused;
+            if (type == 0)
+                return player_paused;
+            else
+                return system_paused;
+        }
+
+        public void quit()
+        {
+
         }
 
         public Texture2D VideoBackground
@@ -293,7 +327,10 @@ namespace Slime_Engine
                 scene.PhysicsEngine = new MataliPhysics();
                 scene.PhysicsEngine.Gravity = GRAVITY;
                 scene.PhysicsEngine.GravityDirection = new Vector3(0, 0, -1);
-                ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
+                if (isPaused(PLAYER_ID))
+                    pause(PLAYER_ID);
+                else
+                    ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
             }
 
             // Set up the lights used in the scene
@@ -304,9 +341,6 @@ namespace Slime_Engine
             SetupMarkerTracking(videoBrush);
 
             createObjects();
-
-            if (paused)
-                pause();
 
             State.ShowNotifications = true;
             Notifier.Font = font;
@@ -490,14 +524,16 @@ namespace Slime_Engine
             // send over your information
             if (ground_marker_node.MarkerFound)
             {
+                if (isPaused(SYSTEM_ID))
+                    resume(SYSTEM_ID);
                 if (sendData && selected_game_type != (int)game_types.single && senderSocket != null)
                     sendOutData();
                 sendData = !sendData;
             }
             else
             {
-                if (!paused)
-                    pause();
+                if (!isPaused(SYSTEM_ID))
+                    pause(SYSTEM_ID);
             }
 
             State.Device.Viewport = viewport;
@@ -536,6 +572,7 @@ namespace Slime_Engine
                     playerTwoScore++;
                 resetRound();
             }
+
             writeText(playerOneScore + " - " + playerTwoScore);
             if (player_marker_node.MarkerFound)
                 writeText("I CAN SEE YOU!", 40);

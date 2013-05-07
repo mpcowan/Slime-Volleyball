@@ -73,6 +73,7 @@
     <Compile Include="Paddle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Slime.cs" />
+    <Compile Include="Slime_AI.cs" />
     <Compile Include="Target.cs" />
     <Compile Include="Virtual_Object.cs" />
     <Compile Include="VolleyBall.cs" />

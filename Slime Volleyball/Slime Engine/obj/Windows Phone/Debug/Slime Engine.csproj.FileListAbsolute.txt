@@ -50,7 +50,6 @@ M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Ph
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\NyARToolkit4.markersystem.dll
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\GoblinXNA.pdb
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\MataliPhysics.xml
-M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Slime Engine.csprojResolveAssemblyReference.cache
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Slime Engine.dll
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\obj\Windows Phone\Debug\Slime Engine.pdb

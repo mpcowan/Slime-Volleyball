@@ -19,7 +19,6 @@ namespace Slime_Volleyball
 {
     public partial class Game_Page : PhoneApplicationPage
     {
-        bool paused;
         ApplicationBar appbar;
         ApplicationBarIconButton pause_btn;
         VibrateController haptic;
@@ -34,7 +33,6 @@ namespace Slime_Volleyball
 
         public Game_Page()
         {
-            paused = false;
             haptic = VibrateController.Default;
 
             InitializeComponent();
@@ -47,8 +45,8 @@ namespace Slime_Volleyball
             appbar.IsMenuEnabled = false;
 
             pause_btn = new ApplicationBarIconButton();
-            pause_btn.Text = "Pause";
-            pause_btn.IconUri = new Uri("/Images/appbar.control.pause.png", UriKind.Relative);
+            pause_btn.Text = "Resume";
+            pause_btn.IconUri = new Uri("/Images/appbar.control.play.png", UriKind.Relative);
             ApplicationBarIconButton quit_btn = new ApplicationBarIconButton();
             quit_btn.Text = "Quit";
             quit_btn.IconUri = new Uri("/Images/appbar.close.png", UriKind.Relative);
@@ -168,17 +166,18 @@ namespace Slime_Volleyball
 
         void pause_btn_Click(object sender, EventArgs e)
         {
-            if (paused)
-            {
-                pause_btn.Text = "Resume";
-                pause_btn.IconUri = new Uri("Images/appbar.control.play.png", UriKind.Relative);
-            }
-            else
+            if (engine.isPaused())
             {
                 pause_btn.Text = "Pause";
                 pause_btn.IconUri = new Uri("Images/appbar.control.pause.png", UriKind.Relative);
+                engine.resume();
             }
-            paused = !paused;
+            else
+            {
+                pause_btn.Text = "Resume";
+                pause_btn.IconUri = new Uri("Images/appbar.control.play.png", UriKind.Relative);
+                engine.pause();
+            }
         }
 
         /// <summary>

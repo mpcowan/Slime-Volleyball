@@ -39,37 +39,52 @@ namespace Slime_Engine
 {
     public class Engine
     {
+        #region CONSTANTS
+        const float WAND_MARKER_SIZE = 39f;
+        const float GROUND_MARKER_SIZE = 55f;
+        const float PLANAR_THICKNESS = 4f;
+        const float COURT_WIDTH = 5 * GROUND_MARKER_SIZE;
+        const float COURT_LENGTH = 7 * GROUND_MARKER_SIZE;
+        const float PADDLE_ANGLE = 25f;
+        const float SLIME_HEIGHT = 15f;
+        const float BALL_INIT_HEIGHT = 4 * GROUND_MARKER_SIZE;
+        const float PHYSICS_SPEED = 1 / 15f;
+        const float GRAVITY = 30f;
+        Vector3 PLAYER_BALL_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
+        Vector3 OPPONENT_BALL_START = new Vector3(0, 2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
+        Vector3 PLAYER_SLIME_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, SLIME_HEIGHT);
+        Vector3 OPPONENT_SLIME_START = new Vector3(0, 2 * GROUND_MARKER_SIZE, SLIME_HEIGHT);
+        #endregion CONSTANTS
+
         enum game_types { single, leader, opponent };
         int selected_game_type;
         Scene scene;
         SpriteFont font;
         bool betterFPS = true;
+        bool paused = true;
 
         SoundEffect bounceSound;
 
+        #region NODES
         CameraNode cameraNode;
         Viewport viewport;
 
         MarkerNode ground_marker_node;
         MarkerNode player_marker_node;
 
-        float wandSize = 39f;
-        float groundNodeSize = 55f;
-
         Court court;
         VolleyBall vball;
+        Target target;
         Paddle player_slime;
         Paddle opponent_slime;
         //Slime player_slime;
         //Slime opponent_slime;
-
-        Vector3 prior_wand_movement;
-        bool first_find = true;
+        #endregion NODES
 
         int playerOneScore = 0;
-        int playerTwoScore = -1; /* Dirty Hack Ball starts offscreen and scores*/
+        int playerTwoScore = 0;
 
-        // Networking vars
+        #region NETWORKING_VARS
         const int listening_port = 9002;
         const string listening_ip = "160.39.234.102";
         string opponent_ip;
@@ -79,6 +94,7 @@ namespace Slime_Engine
         bool sendData = true;
         int seq = 0;
         int receive_seq = 0;
+        #endregion NETWORKING_VARS
 
         public Engine(string gameType, string gameID, string opponent_ip) 
         {
@@ -86,8 +102,10 @@ namespace Slime_Engine
             if (this.gameID == "")
                 this.gameID = "0";
             this.opponent_ip = opponent_ip;
+
             if (!gameType.Equals("single"))
             {
+                #region START_NETWORKING
                 receiverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 senderSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
@@ -104,6 +122,7 @@ namespace Slime_Engine
                 receiveEventArg.SetBuffer(new byte[1024], 0, 1024);
                 receiveEventArg.Completed += receiveEventArg_Completed;
                 receiverSocket.ReceiveFromAsync(receiveEventArg);
+                #endregion START_NETWORKING
             }
 
             if (gameType.Equals("single"))
@@ -115,6 +134,8 @@ namespace Slime_Engine
             else
                 selected_game_type = (int)game_types.single;
         }
+
+        #region NETWORKING_METHODS
 
         void receiveEventArg_Completed(object sender, SocketAsyncEventArgs e)
         {
@@ -209,6 +230,41 @@ namespace Slime_Engine
             senderSocket.SendToAsync(sendDataEventArg);
         }
 
+        #endregion NETWORKING_METHODS
+
+        /// <summary>
+        /// Stops running physics, which should stop the ball.
+        /// </summary>
+        public void pause()
+        {
+            if (!paused)
+            {
+                paused = true;
+                ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 0f;
+            }
+        }
+
+        /// <summary>
+        /// Resumes running physics, which should reanimate the ball.
+        /// </summary>
+        public void resume()
+        {
+            if (paused)
+            {
+                paused = false;
+                ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
+            }
+        }
+
+        /// <summary>
+        /// Getter method for the paused property of the engine.
+        /// </summary>
+        /// <returns></returns>
+        public bool isPaused()
+        {
+            return paused;
+        }
+
         public Texture2D VideoBackground
         {
             get { return scene.BackgroundTexture; }
@@ -235,9 +291,9 @@ namespace Slime_Engine
             if (selected_game_type != (int)game_types.opponent)
             {
                 scene.PhysicsEngine = new MataliPhysics();
-                scene.PhysicsEngine.Gravity = 40;
+                scene.PhysicsEngine.Gravity = GRAVITY;
                 scene.PhysicsEngine.GravityDirection = new Vector3(0, 0, -1);
-                ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 1 / 15f;
+                ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
             }
 
             // Set up the lights used in the scene
@@ -248,6 +304,9 @@ namespace Slime_Engine
             SetupMarkerTracking(videoBrush);
 
             createObjects();
+
+            if (paused)
+                pause();
 
             State.ShowNotifications = true;
             Notifier.Font = font;
@@ -325,42 +384,43 @@ namespace Slime_Engine
             ground_marker_node = new MarkerNode(scene.MarkerTracker, "SlimeGroundArray.xml", NyARToolkitTracker.ComputationMethod.Average);
             scene.RootNode.AddChild(ground_marker_node);
 
-            InvisibleWall invisWallOne = new InvisibleWall(float.MaxValue, new Vector3(5 * groundNodeSize, 4f, 7 * groundNodeSize));
-            InvisibleWall invisWallTwo = new InvisibleWall(float.MaxValue, new Vector3(4f, 7 * groundNodeSize, 7 * groundNodeSize));
-            InvisibleWall invisWallThree = new InvisibleWall(float.MaxValue, new Vector3(5 * groundNodeSize, 4f, 7 * groundNodeSize));
-            InvisibleWall invisWallFour = new InvisibleWall(float.MaxValue, new Vector3(4f, 7 * groundNodeSize, 7 * groundNodeSize));
+            InvisibleWall invisWallOne = new InvisibleWall(float.MaxValue, new Vector3(COURT_WIDTH, PLANAR_THICKNESS, COURT_LENGTH));
+            InvisibleWall invisWallTwo = new InvisibleWall(float.MaxValue, new Vector3(PLANAR_THICKNESS, COURT_LENGTH, COURT_LENGTH));
+            InvisibleWall invisWallThree = new InvisibleWall(float.MaxValue, new Vector3(COURT_WIDTH, PLANAR_THICKNESS, COURT_LENGTH));
+            InvisibleWall invisWallFour = new InvisibleWall(float.MaxValue, new Vector3(PLANAR_THICKNESS, COURT_LENGTH, COURT_LENGTH));
 
-            invisWallOne.translate(new Vector3(0, 7 * groundNodeSize / 2, 7 * groundNodeSize / 2));
-            invisWallTwo.translate(new Vector3(-(5 * groundNodeSize / 2), 0, 7 * groundNodeSize / 2));
-            invisWallThree.translate(new Vector3(0, -(7 * groundNodeSize / 2), 7 * groundNodeSize / 2));
-            invisWallFour.translate(new Vector3(5 * groundNodeSize / 2, 0, 7 * groundNodeSize / 2));
+            invisWallOne.translate(new Vector3(0, COURT_LENGTH / 2, COURT_LENGTH / 2));
+            invisWallTwo.translate(new Vector3(-(COURT_WIDTH / 2), 0, COURT_LENGTH / 2));
+            invisWallThree.translate(new Vector3(0, -(COURT_LENGTH / 2), COURT_LENGTH / 2));
+            invisWallFour.translate(new Vector3(COURT_WIDTH / 2, 0, COURT_LENGTH / 2));
 
+            // Add the walls onto the ground marker
             ground_marker_node.AddChild(invisWallOne.getTransformNode());
             ground_marker_node.AddChild(invisWallTwo.getTransformNode());
             ground_marker_node.AddChild(invisWallThree.getTransformNode());
             ground_marker_node.AddChild(invisWallFour.getTransformNode());
 
-            // Create some physical ground object
-            court = new Court(float.MaxValue, new Vector3(5 * groundNodeSize, 7 * groundNodeSize, 4f));
+            // Create the court
+            court = new Court(float.MaxValue, new Vector3(COURT_WIDTH, COURT_LENGTH, PLANAR_THICKNESS));
             // Initial translation
-            court.translate(new Vector3(0, 0, 2f));
+            court.translate(new Vector3(0, 0, PLANAR_THICKNESS / 2));
             // Add it to the scene
             ground_marker_node.AddChild(court.getTransformNode());
 
             // Time to create the net
-            Net net = new Net(float.MaxValue, new Vector3(5 * groundNodeSize, 5f, groundNodeSize));
+            Net net = new Net(float.MaxValue, new Vector3(COURT_WIDTH, PLANAR_THICKNESS, GROUND_MARKER_SIZE));
             // Initial translation
-            net.translate(new Vector3(0, 0, 1f + (groundNodeSize / 2)));
+            net.translate(new Vector3(0, 0, 1f + (GROUND_MARKER_SIZE / 2)));
             // Add it to the scene
             ground_marker_node.AddChild(net.getTransformNode());
 
             // Lets create the all important volleyball
             if (selected_game_type == (int)game_types.opponent)
-                vball = new VolleyBall(1f, groundNodeSize / 2f, bounceSound, true);
+                vball = new VolleyBall(1f, GROUND_MARKER_SIZE / 2f, bounceSound, true);
             else
-                vball = new VolleyBall(1f, groundNodeSize / 2f, bounceSound, false);
+                vball = new VolleyBall(1f, GROUND_MARKER_SIZE / 2f, bounceSound, false);
             // Perform initial manipulations
-            vball.translate(new Vector3(0, -2 * groundNodeSize, 4 * groundNodeSize));
+            vball.translate(PLAYER_BALL_START);
             // Add it to the scene
             ground_marker_node.AddChild(vball.getTransformNode());
             
@@ -369,36 +429,18 @@ namespace Slime_Engine
             scene.RootNode.AddChild(player_marker_node);
             
             // Create the slime for the player
-            //player_slime = new Slime(100f, wandSize);
-            player_slime = new Paddle(float.MaxValue, new Vector3(wandSize * 1.5f, wandSize * 1.5f, 3f), Color.Red.ToVector4());
+            player_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Red.ToVector4());
             // Initial translation
-            //if (selected_game_type == (int)game_types.opponent)
-            //{
-            //    player_slime.translate(new Vector3(0, groundNodeSize, 12));
-            //    player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(20)));
-            //}
-            //else
-            //{
-                player_slime.translate(new Vector3(0, -1 * groundNodeSize, 12));
-                player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-20)));
-            //}
-            // Add it to the wand node
-            //player_marker_node.AddChild(player_slime.getTransformNode());
+            player_slime.translate(PLAYER_SLIME_START);
+            player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-PADDLE_ANGLE)));
+            // Add it to the scene
             ground_marker_node.AddChild(player_slime.getTransformNode());
 
             // Create the slime for the opponent
-            opponent_slime = new Paddle(float.MaxValue, new Vector3(wandSize  * 1.5f, wandSize * 1.5f, 3f), Color.Purple.ToVector4());
+            opponent_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE  * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Purple.ToVector4());
             // Initial translation
-            //if (selected_game_type == (int)game_types.opponent)
-            //{
-            //    opponent_slime.translate(new Vector3(0, -1 * groundNodeSize, 12));
-            //    opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-20)));
-            //}
-            //else
-            //{
-                opponent_slime.translate(new Vector3(0, 2 * groundNodeSize, 12));
-                opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(20)));
-            //}
+            opponent_slime.translate(OPPONENT_SLIME_START);
+            opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(PADDLE_ANGLE)));
             // Add it to the scene
             ground_marker_node.AddChild(opponent_slime.getTransformNode());
         }
@@ -413,9 +455,11 @@ namespace Slime_Engine
         {
             court.reset_point_scored();
             ground_marker_node.RemoveChild(vball.getTransformNode());
-            vball = new VolleyBall(1f, groundNodeSize / 2f, bounceSound, false);
+            vball = new VolleyBall(1f, GROUND_MARKER_SIZE / 2f, bounceSound, false);
             // Perform initial manipulations
-            vball.translate(new Vector3(0, -2 * groundNodeSize, 4 * groundNodeSize));
+            vball.translate(PLAYER_BALL_START);
+            //player_slime.setTranslation(PLAYER_SLIME_START);
+            //opponent_slime.setTranslation(OPPONENT_SLIME_START);
             ground_marker_node.AddChild(vball.getTransformNode());
         }
 
@@ -431,13 +475,13 @@ namespace Slime_Engine
 
         private void writeText(string s)
         {
-            UI2DRenderer.WriteText(new Vector2(0, 10), s, Color.White, font,
+            UI2DRenderer.WriteText(new Vector2(0, 5), s, Color.White, font,
                 GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
         }
 
         private void writeText(string s, int offset)
         {
-            UI2DRenderer.WriteText(new Vector2(0, 10 + offset), s, Color.White, font,
+            UI2DRenderer.WriteText(new Vector2(0, 5 + offset), s, Color.White, font,
                 GoblinEnums.HorizontalAlignment.Center, GoblinEnums.VerticalAlignment.Top + 80);
         }
 
@@ -448,8 +492,13 @@ namespace Slime_Engine
             {
                 if (sendData && selected_game_type != (int)game_types.single && senderSocket != null)
                     sendOutData();
+                sendData = !sendData;
             }
-            sendData = !sendData;
+            else
+            {
+                if (!paused)
+                    pause();
+            }
 
             State.Device.Viewport = viewport;
 
@@ -463,7 +512,6 @@ namespace Slime_Engine
             {
                 TransformNode slimeAI_TransformNode = opponent_slime.getTransformNode();
                 Vector3 vballPosition = vball.getWorldTransformationTranslation();
-                writeText(playerOneScore + " - " + playerTwoScore);
 
                 Random rand = new Random();
                 int i = rand.Next(3);
@@ -488,6 +536,11 @@ namespace Slime_Engine
                     playerTwoScore++;
                 resetRound();
             }
+            writeText(playerOneScore + " - " + playerTwoScore);
+            if (player_marker_node.MarkerFound)
+                writeText("I CAN SEE YOU!", 40);
+            else
+                writeText("WHERE THE FUCK?", 40);
             try
             {
                 scene.Draw(elapsedTime, false);

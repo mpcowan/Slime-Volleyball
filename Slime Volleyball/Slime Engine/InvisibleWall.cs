@@ -16,94 +16,15 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace Slime_Engine
 {
-    class InvisibleWall
+    class InvisibleWall : Virtual_Object
     {
-        // The GeometryNode to be used by GoblinXNA
-        private GeometryNode geomNode;
-
-        // The TransformationNode to be used to manipulate the ball
-        private TransformNode transNode;
-
-        public InvisibleWall(float mass, Vector3 size)
+        public InvisibleWall(float mass, Vector3 size) : base()
         {
             createObj(size);
-            applyPhysics(mass);
+            applyPhysics(mass, "wall", true, false, GoblinXNA.Physics.ShapeType.Box);
         }
 
-        public TransformNode getTransformNode()
-        {
-            return transNode;
-        }
-
-
-        public Vector3 getDimensions()
-        {
-            return Vector3Helper.GetDimensions(geomNode.Model.MinimumBoundingBox);
-        }
-
-        public void scaleToSize(float size)
-        {
-            float scale = 1f;
-            Vector3 dimensions = getDimensions();
-            if (dimensions.X > dimensions.Y)
-                scale = size / Math.Max(dimensions.X, dimensions.Z);
-            else
-                scale = size / Math.Max(dimensions.Y, dimensions.Z);
-            transNode.Scale = new Vector3(scale, scale, scale);
-        }
-
-        public void scaleX(float size)
-        {
-            float scale = 1f;
-            Vector3 dimensions = getDimensions();
-            scale = size / dimensions.X;
-            Vector3 oldScales = transNode.Scale;
-            transNode.Scale = new Vector3(scale, oldScales.Y, oldScales.Z);
-        }
-
-        public void scaleY(float size)
-        {
-            float scale = 1f;
-            Vector3 dimensions = getDimensions();
-            scale = size / dimensions.Y;
-            Vector3 oldScales = transNode.Scale;
-            transNode.Scale = new Vector3(oldScales.X, scale, oldScales.Z);
-        }
-
-        public void scaleZ(float size)
-        {
-            float scale = 1f;
-            Vector3 dimensions = getDimensions();
-            scale = size / dimensions.Z;
-            Vector3 oldScales = transNode.Scale;
-            transNode.Scale = new Vector3(oldScales.X, oldScales.Y, scale);
-        }
-
-        public void translate(Vector3 translationVector)
-        {
-            transNode.Translation += translationVector;
-        }
-
-        public string nodeTranslationToString()
-        {
-            return "X: " + geomNode.WorldTransformation.Translation.X.ToString() +
-                    " Y: " + geomNode.WorldTransformation.Translation.Y.ToString() +
-                    " Z: " + geomNode.WorldTransformation.Translation.Z.ToString();
-        }
-
-        public string translationToString()
-        {
-            return "X: " + transNode.Translation.X.ToString() +
-                    " Y: " + transNode.Translation.Y.ToString() +
-                    " Z: " + transNode.Translation.Z.ToString();
-        }
-
-        public string worldTransformToString()
-        {
-            return "X: " + transNode.WorldTransformation.Translation.X.ToString() +
-                    " Y: " + transNode.WorldTransformation.Translation.Y.ToString() +
-                    " Z: " + transNode.WorldTransformation.Translation.Z.ToString();
-        }
+        protected override void createObj() { }
 
         private void createObj(Vector3 dim)
         {
@@ -123,31 +44,7 @@ namespace Slime_Engine
             transNode.AddChild(geomNode);
         }
 
-        private void applyPhysics(float mass)
-        {
-            geomNode.Physics = new MataliObject(geomNode);
-            geomNode.Physics.MaterialName = "wall";
-            geomNode.Physics.Shape = GoblinXNA.Physics.ShapeType.Box;
-            geomNode.Physics.Pickable = true;
-            geomNode.Physics.Interactable = false;
-            ((MataliObject)geomNode.Physics).Restitution = 0;
-            ((MataliObject)geomNode.Physics).DynamicFriction = 0;
-            ((MataliObject)geomNode.Physics).StaticFriction = 0;
-            geomNode.Physics.Mass = mass;
-            geomNode.Physics.Collidable = true;
-            geomNode.AddToPhysicsEngine = true;
-            ((MataliObject)geomNode.Physics).CollisionStartCallback = wallCollisionStart;
-            ((MataliObject)geomNode.Physics).CollisionEndCallback = wallCollisionDone;
-        }
-
-        private void wallCollisionDone(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
-        {
-
-        }
-
-        private void wallCollisionStart(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
-        {
-
-        }
+        protected override void obj_collision_start(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject) { }
+        protected override void obj_collision_done(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject) { }
     }
 }

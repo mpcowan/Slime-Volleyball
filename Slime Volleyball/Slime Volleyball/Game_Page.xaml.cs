@@ -137,7 +137,34 @@ namespace Slime_Volleyball
         /// </summary>
         private void OnUpdate(object sender, GameTimerEventArgs e)
         {
-            engine.Update(e.ElapsedTime, this.IsEnabled);
+            if (engine.getWinner() == 0)
+            {
+                MessageBox.Show("You have won this round of slime volleyball!", "Congrats!", MessageBoxButton.OK);
+                // Stop the timer
+                timer.Stop();
+
+                // Set the sharing mode of the graphics device to turn off XNA rendering
+                SharedGraphicsDeviceManager.Current.GraphicsDevice.SetSharingMode(false);
+
+                engine.Dispose();
+                NavigationService.GoBack();
+                //NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+            }
+            else if (engine.getWinner() == 1)
+            {
+                MessageBox.Show("Looks like your opponent won this round.", "Better Luck Next Time", MessageBoxButton.OK);
+                // Stop the timer
+                timer.Stop();
+
+                // Set the sharing mode of the graphics device to turn off XNA rendering
+                SharedGraphicsDeviceManager.Current.GraphicsDevice.SetSharingMode(false);
+
+                engine.Dispose();
+                NavigationService.GoBack();
+                //NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+            }
+            else
+                engine.Update(e.ElapsedTime, this.IsEnabled);
         }
 
         /// <summary>

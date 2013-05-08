@@ -69,6 +69,8 @@ namespace Slime_Engine
         bool betterFPS = true;
         bool player_paused = true;
         bool system_paused = false;
+        bool game_over = false;
+        int game_winner;
 
         SoundEffect bounceSound;
 
@@ -306,7 +308,20 @@ namespace Slime_Engine
 
         private void announce_winner(int winner)
         {
-            ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 0f;
+            pause(PLAYER_ID);
+            game_over = true;
+            game_winner = winner;
+        }
+
+        /// <summary>
+        /// Returns -1 if game is still ongoing, 0 if player won, and 1 if opponent won.
+        /// </summary>
+        /// <returns></returns>
+        public int getWinner()
+        {
+            if (!game_over)
+                return -1;
+            return game_winner;
         }
 
         public Texture2D VideoBackground
@@ -614,7 +629,7 @@ namespace Slime_Engine
             if (court.is_point_scored())
             {
                 Vector3 vballPosition = vball.getWorldTransformationTranslation();
-                if (vballPosition.Y < 0)
+                if (vballPosition.Y > 0)
                     playerOneScore++;
                 else
                     playerTwoScore++;
@@ -627,7 +642,7 @@ namespace Slime_Engine
 
             update_tracker();
 
-            writeText(playerOneScore + " - " + playerTwoScore);
+            writeText("(Opponent)  " + playerTwoScore + " - " + playerOneScore + "  (You)");
             if (isPaused(PLAYER_ID))
                 writeText(PAUSED_MSG, 40);
             else if (isPaused(SYSTEM_ID))

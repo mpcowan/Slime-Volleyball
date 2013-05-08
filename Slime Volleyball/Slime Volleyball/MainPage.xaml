@@ -24,20 +24,8 @@
 
 		<Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0" VerticalAlignment="Center">
 			<StackPanel Orientation="Horizontal" Margin="0,0,0,26" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-				<Button Content="1 Player" BorderThickness="0" Background="#FF2B742E" FontSize="37.333" Margin="0,0,47,0" Padding="25,10" Click="Button_Click" >
-					<i:Interaction.Triggers>
-						<i:EventTrigger EventName="Click">
-							<ec:NavigateToPageAction TargetPage="/Game_Page.xaml?type=single"/>
-						</i:EventTrigger>
-					</i:Interaction.Triggers>
-				</Button>
-				<Button Content="2 Player" BorderThickness="0" Background="#FF4864C3" FontSize="37.333" Padding="25,10" Click="Button_Click_1" >
-					<i:Interaction.Triggers>
-						<i:EventTrigger EventName="Click">
-							<ec:NavigateToPageAction TargetPage="/Coop_Setup.xaml"/>
-						</i:EventTrigger>
-					</i:Interaction.Triggers>
-				</Button>
+				<Button Content="1 Player" BorderThickness="0" Background="#FF2B742E" FontSize="37.333" Margin="0,0,47,0" Padding="25,10" Click="Button_Click" />
+				<Button Content="2 Player" BorderThickness="0" Background="#FF4864C3" FontSize="37.333" Padding="25,10" Click="Button_Click_1" />
 			</StackPanel>
 		</Grid>
         

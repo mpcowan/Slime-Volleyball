@@ -37,6 +37,21 @@ namespace Slime_Engine
             return Vector3Helper.GetDimensions(geomNode.Model.MinimumBoundingBox);
         }
 
+        public float getXDim()
+        {
+            return Vector3Helper.GetDimensions(geomNode.Model.MinimumBoundingBox).X;
+        }
+
+        public float getYDim()
+        {
+            return Vector3Helper.GetDimensions(geomNode.Model.MinimumBoundingBox).Y;
+        }
+
+        public float getZDim()
+        {
+            return Vector3Helper.GetDimensions(geomNode.Model.MinimumBoundingBox).Z;
+        }
+
         public void scaleToSize(float size)
         {
             float scale = 1f;

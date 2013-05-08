@@ -519,9 +519,30 @@ namespace Slime_Engine
         private void update_tracker()
         {
             Vector3 vballPosition = vball.getWorldTransformationTranslation();
-            Vector3 oppSlimePosition = opponent_slime.getWorldTransformationTranslation();
-
-            target.setTranslation(new Vector3(vballPosition.X, vballPosition.Y, TARGET_SIZE / 2));
+            float x_offset = TARGET_SIZE / 2;
+            if (vballPosition.Y < 0)
+            {
+                Vector3 playerSlimePosition = player_slime.getWorldTransformationTranslation();
+                if (vballPosition.Y < playerSlimePosition.Y + player_slime.getYDim() / 2 && vballPosition.Y > playerSlimePosition.Y - player_slime.getYDim() / 2)
+                {
+                    if (vballPosition.X < playerSlimePosition.X + player_slime.getXDim() / 2 && vballPosition.X > playerSlimePosition.X - player_slime.getXDim() / 2)
+                    {
+                        x_offset = 15f + TARGET_SIZE;
+                    }
+                }
+            }
+            else
+            {
+                Vector3 oppSlimePosition = opponent_slime.getWorldTransformationTranslation();
+                if (vballPosition.Y < oppSlimePosition.Y + opponent_slime.getYDim() / 2 && vballPosition.Y > oppSlimePosition.Y - opponent_slime.getYDim() / 2)
+                {
+                    if (vballPosition.X < oppSlimePosition.X + opponent_slime.getXDim() / 2 && vballPosition.X > oppSlimePosition.X - opponent_slime.getXDim() / 2)
+                    {
+                        x_offset = 15f + TARGET_SIZE;
+                    }
+                }
+            }
+            target.setTranslation(new Vector3(vballPosition.X, vballPosition.Y, x_offset));
         }
 
         public void Dispose()

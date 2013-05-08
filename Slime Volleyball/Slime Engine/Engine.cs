@@ -43,6 +43,7 @@ namespace Slime_Engine
         const float WAND_MARKER_SIZE = 39f;
         const float GROUND_MARKER_SIZE = 55f;
         const float PLANAR_THICKNESS = 4f;
+        const float TARGET_SIZE = 8f;
         const float COURT_WIDTH = 5 * GROUND_MARKER_SIZE;
         const float COURT_LENGTH = 7 * GROUND_MARKER_SIZE;
         const float PADDLE_ANGLE = 25f;
@@ -57,6 +58,8 @@ namespace Slime_Engine
         Vector3 OPPONENT_BALL_START = new Vector3(0, 2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
         Vector3 PLAYER_SLIME_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, SLIME_HEIGHT);
         Vector3 OPPONENT_SLIME_START = new Vector3(0, 2 * GROUND_MARKER_SIZE, SLIME_HEIGHT);
+        string PAUSED_MSG = "Paused, press play to resume";
+        string MISSING_GRND_MSG = "Paused, ground marker lost";
         #endregion CONSTANTS
 
         enum game_types { single, leader, opponent };
@@ -273,7 +276,8 @@ namespace Slime_Engine
                 if (player_paused)
                 {
                     player_paused = false;
-                    ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
+                    if (!system_paused)
+                        ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = PHYSICS_SPEED;
                 }
             }
             else if (type == 1)
@@ -302,7 +306,7 @@ namespace Slime_Engine
 
         private void announce_winner(int winner)
         {
-
+            ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 0f;
         }
 
         public Texture2D VideoBackground
@@ -443,7 +447,7 @@ namespace Slime_Engine
             // Create the court
             court = new Court(float.MaxValue, new Vector3(COURT_WIDTH, COURT_LENGTH, PLANAR_THICKNESS));
             // Initial translation
-            court.translate(new Vector3(0, 0, PLANAR_THICKNESS / 2));
+            //court.translate(new Vector3(0, 0, PLANAR_THICKNESS / 2));
             // Add it to the scene
             ground_marker_node.AddChild(court.getTransformNode());
 
@@ -470,6 +474,7 @@ namespace Slime_Engine
             
             // Create the slime for the player
             player_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Red.ToVector4());
+            //player_slime = new Slime(float.MaxValue, WAND_MARKER_SIZE * 1.5f);
             // Initial translation
             player_slime.translate(PLAYER_SLIME_START);
             player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-PADDLE_ANGLE)));
@@ -478,17 +483,25 @@ namespace Slime_Engine
 
             // Create the slime for the opponent
             opponent_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE  * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Purple.ToVector4());
+            //opponent_slime = new Slime(float.MaxValue, WAND_MARKER_SIZE * 1.5f);
             // Initial translation
             opponent_slime.translate(OPPONENT_SLIME_START);
             opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(PADDLE_ANGLE)));
             // Add it to the scene
             ground_marker_node.AddChild(opponent_slime.getTransformNode());
+
+            // Create the laser sight target
+            target = new Target(TARGET_SIZE, Color.Red.ToVector4());
+            // perform initial translations
+            target.setTranslation(new Vector3(PLAYER_BALL_START.X, PLAYER_BALL_START.Y, (TARGET_SIZE / 2) + PLANAR_THICKNESS));
+            // Add it to the scene
+            ground_marker_node.AddChild(target.getTransformNode());
         }
 
         private void LoadContent(ContentManager content)
         {
             font = content.Load<SpriteFont>("font");
-            bounceSound = content.Load<SoundEffect>("rubber_ball_01");
+            bounceSound = content.Load<SoundEffect>("bounce");
         }
 
         private void resetRound()
@@ -501,6 +514,14 @@ namespace Slime_Engine
             //player_slime.setTranslation(PLAYER_SLIME_START);
             //opponent_slime.setTranslation(OPPONENT_SLIME_START);
             ground_marker_node.AddChild(vball.getTransformNode());
+        }
+
+        private void update_tracker()
+        {
+            Vector3 vballPosition = vball.getWorldTransformationTranslation();
+            Vector3 oppSlimePosition = opponent_slime.getWorldTransformationTranslation();
+
+            target.setTranslation(new Vector3(vballPosition.X, vballPosition.Y, TARGET_SIZE / 2));
         }
 
         public void Dispose()
@@ -583,11 +604,18 @@ namespace Slime_Engine
                 resetRound();
             }
 
+            update_tracker();
+
             writeText(playerOneScore + " - " + playerTwoScore);
-            if (player_marker_node.MarkerFound)
+            if (isPaused(PLAYER_ID))
+                writeText(PAUSED_MSG, 40);
+            else if (isPaused(SYSTEM_ID))
+                writeText(MISSING_GRND_MSG, 40);
+            else if (player_marker_node.MarkerFound)
                 writeText("PADDLE FOUND", 40);
             else
                 writeText("PADDLE LOST...", 40);
+
             try
             {
                 scene.Draw(elapsedTime, false);

@@ -36,10 +36,10 @@ M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Ph
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\camera_para.dat
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\font.xnb
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\DebugFont.xnb
-M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\rubber_ball_01.xnb
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\blueslime.xnb
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\greenslime.xnb
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\redslime.xnb
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\bounce.xnb
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Slime Engine.dll
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Slime Engine.pdb
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\GoblinXNA.dll

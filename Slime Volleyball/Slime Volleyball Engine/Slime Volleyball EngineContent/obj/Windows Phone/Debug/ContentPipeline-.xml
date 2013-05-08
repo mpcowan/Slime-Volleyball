@@ -20,15 +20,6 @@
       <Time>2013-04-24T23:17:26-04:00</Time>
     </Item>
     <Item>
-      <Source>rubber_ball_01.wav</Source>
-      <Name>rubber_ball_01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <Options>None</Options>
-      <Output>M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\rubber_ball_01.xnb</Output>
-      <Time>2013-04-24T23:17:26-04:00</Time>
-    </Item>
-    <Item>
       <Source>blueslime.fbx</Source>
       <Name>blueslime</Name>
       <Importer>FbxImporter</Importer>
@@ -38,7 +29,7 @@
       <Time>2013-04-24T23:17:26-04:00</Time>
       <Dependency>
         <Key>obj\Windows Phone\Debug\blueslime_0.xml</Key>
-        <Value>2013-05-07T18:30:10.1928838-04:00</Value>
+        <Value>2013-05-08T01:33:57.2094986-04:00</Value>
       </Dependency>
     </Item>
     <Item>
@@ -51,7 +42,7 @@
       <Time>2013-04-24T22:25:46.8020029-04:00</Time>
       <Dependency>
         <Key>obj\Windows Phone\Debug\greenslime_0.xml</Key>
-        <Value>2013-05-07T18:30:10.3009097-04:00</Value>
+        <Value>2013-05-08T01:33:57.3195157-04:00</Value>
       </Dependency>
     </Item>
     <Item>
@@ -64,8 +55,17 @@
       <Time>2013-04-24T23:17:26-04:00</Time>
       <Dependency>
         <Key>obj\Windows Phone\Debug\redslime_0.xml</Key>
-        <Value>2013-05-07T18:30:10.3959093-04:00</Value>
+        <Value>2013-05-08T01:33:57.4175112-04:00</Value>
       </Dependency>
+    </Item>
+    <Item>
+      <Source>bounce.wav</Source>
+      <Name>bounce</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Engine\bin\Windows Phone\Debug\Content\bounce.xnb</Output>
+      <Time>2013-05-08T00:57:46.6381257-04:00</Time>
     </Item>
     <Item>
       <Source>blueslime.fbx</Source>

@@ -14,11 +14,6 @@
     shell:SystemTray.IsVisible="False">
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
         <Rectangle Width="640" Height="480" HorizontalAlignment="Center">
             <Rectangle.Fill>
                 <VideoBrush x:Name="viewfinderBrush" />

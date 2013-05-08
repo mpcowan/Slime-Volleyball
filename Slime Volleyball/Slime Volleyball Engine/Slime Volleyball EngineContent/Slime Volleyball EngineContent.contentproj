@@ -44,13 +44,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="rubber_ball_01.wav">
-      <Name>rubber_ball_01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="blueslime.fbx">
       <Name>blueslime</Name>
       <Importer>FbxImporter</Importer>
@@ -65,6 +58,13 @@
       <Name>redslime</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="bounce.wav">
+      <Name>bounce</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

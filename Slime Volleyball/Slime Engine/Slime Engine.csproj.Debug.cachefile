@@ -1,9 +1,9 @@
 Content\font.xnb
 Content\DebugFont.xnb
-Content\rubber_ball_01.xnb
 Content\blueslime.xnb
 Content\greenslime.xnb
 Content\redslime.xnb
+Content\bounce.xnb
 id511.xml
 SlimeGroundArray.xml
 camera_para.dat

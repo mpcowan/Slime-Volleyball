@@ -189,7 +189,7 @@ namespace Slime_Volleyball
                 pause_btn.IconUri = new Uri("Images/appbar.control.play.png", UriKind.Relative);
                 engine.pause(0);
             }
-            MessageBox.Show("TODO, add all of the help text...", "Help + Info", MessageBoxButton.OK);
+            MessageBox.Show("Gameplay:\n\nMove your paddle to control your slime. Make sure the paddle can be seen by the phones camera. The little red dot tracks the position of the ball.\n\nScoring:\n\nUse the invisible walls around the court and your slime to return the ball over the net. A point is scored when the ball touches the ground on your opponent's side.\n\nWinning:\n\nThe first player to score 7 points wins the game.", "Help + Info", MessageBoxButton.OK);
         }
 
         void quit_btn_Click(object sender, EventArgs e)
@@ -205,7 +205,17 @@ namespace Slime_Volleyball
             }
             MessageBoxResult user_resp = MessageBox.Show("Quit the game?", "Quit?", MessageBoxButton.OKCancel);
             if (user_resp == MessageBoxResult.OK)
+            {
                 engine.quit();
+                // Stop the timer
+                timer.Stop();
+
+                // Set the sharing mode of the graphics device to turn off XNA rendering
+                SharedGraphicsDeviceManager.Current.GraphicsDevice.SetSharingMode(false);
+
+                engine.Dispose();
+                NavigationService.GoBack();
+            }
         }
 
         void pause_btn_Click(object sender, EventArgs e)

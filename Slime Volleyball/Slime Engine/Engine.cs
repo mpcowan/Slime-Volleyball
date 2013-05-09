@@ -42,12 +42,14 @@ namespace Slime_Engine
         #region CONSTANTS
         const float WAND_MARKER_SIZE = 39f;
         const float GROUND_MARKER_SIZE = 55f;
+        const float SLIME_SIZE = GROUND_MARKER_SIZE;
         const float PLANAR_THICKNESS = 4f;
         const float TARGET_SIZE = 8f;
         const float COURT_WIDTH = 5 * GROUND_MARKER_SIZE;
         const float COURT_LENGTH = 7 * GROUND_MARKER_SIZE;
         const float PADDLE_ANGLE = 25f;
-        const float SLIME_HEIGHT = 15f;
+        const float PADDLE_HEIGHT = 15f;
+        const float SLIME_HEIGHT = 2f;
         const float BALL_INIT_HEIGHT = 4 * GROUND_MARKER_SIZE;
         const float PHYSICS_SPEED = 1 / 15f;
         const float GRAVITY = 30f;
@@ -72,7 +74,11 @@ namespace Slime_Engine
         bool game_over = false;
         int game_winner;
 
+        int ball_drop_countdown;
+        bool ball_drop_delay;
+
         SoundEffect bounceSound;
+        Slime_AI slime_ai;
 
         #region NODES
         CameraNode cameraNode;
@@ -84,10 +90,10 @@ namespace Slime_Engine
         Court court;
         VolleyBall vball;
         Target target;
-        Paddle player_slime;
-        Paddle opponent_slime;
-        //Slime player_slime;
-        //Slime opponent_slime;
+        //Paddle player_slime;
+        //Paddle opponent_slime;
+        Slime player_slime;
+        Slime opponent_slime;
         #endregion NODES
 
         int playerOneScore = 0;
@@ -104,6 +110,7 @@ namespace Slime_Engine
         int seq = 0;
         int receive_seq = 0;
         int bytes_sent = 0;
+        int bytes_recv = 0;
         #endregion NETWORKING_VARS
 
         public Engine(string gameType, string gameID, string opponent_ip) 
@@ -124,7 +131,7 @@ namespace Slime_Engine
                 byte[] payload = Encoding.UTF8.GetBytes("receiver initializing");
                 sendDataEventArg.SetBuffer(payload, 0, payload.Length);
                 receiverSocket.SendToAsync(sendDataEventArg);
-                
+
                 Thread.Sleep(1000);
 
                 SocketAsyncEventArgs receiveEventArg = new SocketAsyncEventArgs();
@@ -134,6 +141,8 @@ namespace Slime_Engine
                 receiverSocket.ReceiveFromAsync(receiveEventArg);
                 #endregion START_NETWORKING
             }
+            else
+                slime_ai = new Slime_AI();
 
             if (gameType.Equals("single"))
                 selected_game_type = (int)game_types.single;
@@ -182,7 +191,7 @@ namespace Slime_Engine
                 }
                 else if (selected_game_type == (int)game_types.opponent)
                 {
-                    if (response_parts.Length == 7)
+                    if (response_parts.Length == 9)
                     {
                         try
                         {
@@ -190,15 +199,19 @@ namespace Slime_Engine
                             float ball_x = (float)Convert.ToDouble(response_parts[1]);
                             float ball_y = (float)Convert.ToDouble(response_parts[2]);
                             float ball_z = (float)Convert.ToDouble(response_parts[3]);
-                            float opp_x = (float)Convert.ToDouble(response_parts[4]);
-                            float opp_y = (float)Convert.ToDouble(response_parts[5]);
-                            float opp_z = (float)Convert.ToDouble(response_parts[6]);
+                            int p2score = Convert.ToInt32(response_parts[4]);
+                            int p1score = Convert.ToInt32(response_parts[5]);
+                            float opp_x = (float)Convert.ToDouble(response_parts[6]);
+                            float opp_y = (float)Convert.ToDouble(response_parts[7]);
+                            float opp_z = (float)Convert.ToDouble(response_parts[8]);
 
                             if (seq_num > receive_seq)
                             {
                                 receive_seq = seq_num;
                                 vball.setTranslation(new Vector3(ball_x, -1 * ball_y, ball_z));
                                 opponent_slime.setTranslation(new Vector3(opp_y, -1 * opp_x, opp_z));
+                                playerOneScore = p1score;
+                                playerTwoScore = p2score;
                             }
                         }
                         catch (Exception exp)
@@ -226,7 +239,7 @@ namespace Slime_Engine
             string dataString = gameID + " " + opponent_ip + " " + seq.ToString();
             //string dataString = gameID + " " + "self" + " " + seq.ToString();
             if (selected_game_type == (int)game_types.leader)
-                dataString += " " + vball.nodeTranslationToString();
+                dataString += " " + vball.nodeTranslationToString() + " " + playerOneScore.ToString() + " " + playerTwoScore.ToString();
             dataString += " " + player_slime.nodeTranslationToString();
             return dataString;
         }
@@ -304,6 +317,16 @@ namespace Slime_Engine
         public void quit()
         {
 
+        }
+
+        public int get_bytes_sent()
+        {
+            return bytes_sent;
+        }
+
+        public int get_bytes_received()
+        {
+            return bytes_recv;
         }
 
         private void announce_winner(int winner)
@@ -488,20 +511,22 @@ namespace Slime_Engine
             scene.RootNode.AddChild(player_marker_node);
             
             // Create the slime for the player
-            player_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Red.ToVector4());
-            //player_slime = new Slime(float.MaxValue, WAND_MARKER_SIZE * 1.5f);
+            //player_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Red.ToVector4());
+            player_slime = new Slime(float.MaxValue, GROUND_MARKER_SIZE, Color.SlateGray.ToVector4());
             // Initial translation
             player_slime.translate(PLAYER_SLIME_START);
-            player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-PADDLE_ANGLE)));
+            //player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-PADDLE_ANGLE)));
+            //player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(90)));
             // Add it to the scene
             ground_marker_node.AddChild(player_slime.getTransformNode());
 
             // Create the slime for the opponent
-            opponent_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE  * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Purple.ToVector4());
-            //opponent_slime = new Slime(float.MaxValue, WAND_MARKER_SIZE * 1.5f);
+            //opponent_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE  * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Purple.ToVector4());
+            opponent_slime = new Slime(float.MaxValue, GROUND_MARKER_SIZE, Color.Purple.ToVector4());
             // Initial translation
             opponent_slime.translate(OPPONENT_SLIME_START);
-            opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(PADDLE_ANGLE)));
+            //opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(PADDLE_ANGLE)));
+            //opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(90)));
             // Add it to the scene
             ground_marker_node.AddChild(opponent_slime.getTransformNode());
 
@@ -519,45 +544,56 @@ namespace Slime_Engine
             bounceSound = content.Load<SoundEffect>("bounce");
         }
 
-        private void resetRound()
+        private void resetRound(int side)
         {
             court.reset_point_scored();
             ground_marker_node.RemoveChild(vball.getTransformNode());
             vball = new VolleyBall(1f, GROUND_MARKER_SIZE / 2f, bounceSound, false);
             // Perform initial manipulations
-            vball.translate(PLAYER_BALL_START);
-            //player_slime.setTranslation(PLAYER_SLIME_START);
-            //opponent_slime.setTranslation(OPPONENT_SLIME_START);
+            if (side == 0)
+                vball.translate(PLAYER_BALL_START);
+            else
+                vball.translate(OPPONENT_BALL_START);
+            ball_drop_delay = true;
+            ball_drop_countdown = 0;
+        }
+
+        private void dropBall()
+        {
+            ball_drop_delay = false;
+            ball_drop_countdown = 0;
             ground_marker_node.AddChild(vball.getTransformNode());
         }
 
         private void update_tracker()
         {
             Vector3 vballPosition = vball.getWorldTransformationTranslation();
-            float x_offset = TARGET_SIZE / 2;
+            if (ball_drop_delay)
+                vballPosition = PLAYER_BALL_START;
+            float z_offset = TARGET_SIZE / 2;
             if (vballPosition.Y < 0)
             {
                 Vector3 playerSlimePosition = player_slime.getWorldTransformationTranslation();
-                if (vballPosition.Y < playerSlimePosition.Y + player_slime.getYDim() / 2 && vballPosition.Y > playerSlimePosition.Y - player_slime.getYDim() / 2)
+                if (vballPosition.Y < playerSlimePosition.Y + SLIME_SIZE / 2 && vballPosition.Y > playerSlimePosition.Y - SLIME_SIZE / 2)
                 {
-                    if (vballPosition.X < playerSlimePosition.X + player_slime.getXDim() / 2 && vballPosition.X > playerSlimePosition.X - player_slime.getXDim() / 2)
+                    if (vballPosition.X < playerSlimePosition.X + SLIME_SIZE / 2 && vballPosition.X > playerSlimePosition.X - SLIME_SIZE / 2)
                     {
-                        x_offset = 15f + TARGET_SIZE;
+                        z_offset = 21f + TARGET_SIZE;
                     }
                 }
             }
             else
             {
                 Vector3 oppSlimePosition = opponent_slime.getWorldTransformationTranslation();
-                if (vballPosition.Y < oppSlimePosition.Y + opponent_slime.getYDim() / 2 && vballPosition.Y > oppSlimePosition.Y - opponent_slime.getYDim() / 2)
+                if (vballPosition.Y < oppSlimePosition.Y + SLIME_SIZE / 2 && vballPosition.Y > oppSlimePosition.Y - SLIME_SIZE / 2)
                 {
-                    if (vballPosition.X < oppSlimePosition.X + opponent_slime.getXDim() / 2 && vballPosition.X > oppSlimePosition.X - opponent_slime.getXDim() / 2)
+                    if (vballPosition.X < oppSlimePosition.X + SLIME_SIZE / 2 && vballPosition.X > oppSlimePosition.X - SLIME_SIZE / 2)
                     {
-                        x_offset = 15f + TARGET_SIZE;
+                        z_offset = 21f + TARGET_SIZE;
                     }
                 }
             }
-            target.setTranslation(new Vector3(vballPosition.X, vballPosition.Y, x_offset));
+            target.setTranslation(new Vector3(vballPosition.X, vballPosition.Y, z_offset));
         }
 
         public void Dispose()
@@ -606,38 +642,32 @@ namespace Slime_Engine
                 Vector3 wand_node_translation = player_marker_node.WorldTransformation.Translation;
                 player_slime.setTranslation(wand_node_translation);
             }
-
+            // run AI logic
             if (selected_game_type == (int)game_types.single)
             {
                 TransformNode slimeAI_TransformNode = opponent_slime.getTransformNode();
                 Vector3 vballPosition = vball.getWorldTransformationTranslation();
+                slimeAI_TransformNode.Translation = slime_ai.makeMove(vballPosition, slimeAI_TransformNode.Translation);
 
-                Random rand = new Random();
-                int i = rand.Next(3);
-                int b = rand.Next(3);
-                if (vballPosition.Y > 0)
-                {
-                    //near post
-                    if (vballPosition.Y < 10)
-                        slimeAI_TransformNode.Translation = new Vector3(vballPosition.X + i,
-                        vballPosition.Y + b + 20, slimeAI_TransformNode.Translation.Z);
-                    else
-                        slimeAI_TransformNode.Translation = new Vector3(vballPosition.X + i,
-                            vballPosition.Y + b + 5, slimeAI_TransformNode.Translation.Z);
-                }
             }
             if (court.is_point_scored())
             {
                 Vector3 vballPosition = vball.getWorldTransformationTranslation();
                 if (vballPosition.Y > 0)
+                {
                     playerOneScore++;
+                    resetRound(PLAYER_ID);
+                }
                 else
+                {
                     playerTwoScore++;
+                    resetRound(SYSTEM_ID);
+                }
                 if (playerOneScore == WINNING_SCORE)
                     announce_winner(PLAYER_ID);
                 if (playerTwoScore == WINNING_SCORE)
                     announce_winner(SYSTEM_ID);
-                resetRound();
+                
             }
 
             update_tracker();
@@ -647,10 +677,15 @@ namespace Slime_Engine
                 writeText(PAUSED_MSG, 40);
             else if (isPaused(SYSTEM_ID))
                 writeText(MISSING_GRND_MSG, 40);
-            else if (player_marker_node.MarkerFound)
-                writeText("PADDLE FOUND", 40);
-            else
-                writeText("PADDLE LOST...", 40);
+            else if (ball_drop_delay)
+            {
+                ball_drop_countdown++;
+                writeText((3 - (ball_drop_countdown / 30)).ToString(), 40);
+                if (ball_drop_countdown == 90)
+                {
+                    dropBall();
+                }
+            }
 
             try
             {

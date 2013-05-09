@@ -40,8 +40,8 @@ namespace Slime_Engine
             // Create a material to apply to the ball
             Material paddleMaterial = new Material();
             paddleMaterial.Diffuse = selected_color;
-            paddleMaterial.Specular = Color.White.ToVector4();
-            paddleMaterial.SpecularPower = 5;
+            paddleMaterial.Specular = selected_color;
+            paddleMaterial.SpecularPower = .3f;
 
             geomNode.Material = paddleMaterial;
 

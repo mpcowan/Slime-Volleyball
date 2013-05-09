@@ -18,20 +18,34 @@ namespace Slime_Engine
 {
     class Slime : Virtual_Object
     {
-        public Slime(float mass, float size) : base()
+        public Slime(float mass, float size, Vector4 color)
+            : base()
         {
-            createObj();
+            createObj(color);
             setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(90)));
             scaleToSize(size);
-            applyPhysics(mass, "slime", true, false, GoblinXNA.Physics.ShapeType.ConvexHull);
+            applyPhysics(mass, "slime", true, false, GoblinXNA.Physics.ShapeType.Sphere);
         }
 
-        protected override void createObj()
+        public override void setTranslation(Vector3 translationVector)
+        {
+            transNode.Translation = new Vector3(translationVector.Y, -1 * translationVector.X, transNode.Translation.Z);
+        }
+
+        protected override void createObj() { }
+
+        protected void createObj(Vector4 color)
         {
             geomNode = new GeometryNode("slime");
-            ModelLoader loader = new ModelLoader();
-            geomNode.Model = (Model)loader.Load("", "redslime");
-            ((Model)geomNode.Model).UseInternalMaterials = true;
+            geomNode.Model = new Sphere(1, 20, 20);
+
+            Material paddleMaterial = new Material();
+            paddleMaterial.Diffuse = color;
+            paddleMaterial.Specular = color;
+            paddleMaterial.SpecularPower = .3f;
+
+            geomNode.Material = paddleMaterial;
+
 
             transNode = new TransformNode();
             transNode.AddChild(geomNode);

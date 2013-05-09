@@ -18,19 +18,43 @@ namespace Slime_Engine
 {
     class Slime : Virtual_Object
     {
+        float current_size;
         float MAX_X, MIN_X;
         float MAX_Y, MIN_Y;
 
         public Slime(float mass, float size, Vector4 color, float maxx, float minx, float maxy, float miny) : base()
         {
-            MAX_X = maxx - (size / 2);
-            MIN_X = minx + (size / 2);
-            MAX_Y = maxy - (size / 2);
-            MIN_Y = miny + (size / 2);
+            current_size = size;
+            MAX_X = maxx;
+            MIN_X = minx;
+            MAX_Y = maxy;
+            MIN_Y = miny;
             createObj(color);
             setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(90)));
             scaleToSize(size);
             applyPhysics(mass, "slime", true, false, GoblinXNA.Physics.ShapeType.Sphere);
+        }
+
+        public float getHeight()
+        {
+            return current_size / 2;
+        }
+
+        public float getSize()
+        {
+            return current_size;
+        }
+
+        public override void scaleToSize(float size)
+        {
+            current_size = size;
+            float scale = 1f;
+            Vector3 dimensions = getDimensions();
+            if (dimensions.X > dimensions.Y)
+                scale = size / Math.Max(dimensions.X, dimensions.Z);
+            else
+                scale = size / Math.Max(dimensions.Y, dimensions.Z);
+            transNode.Scale = new Vector3(scale, scale, scale);
         }
 
         public void setAbsoluteTranslation(Vector3 translationVector)
@@ -38,14 +62,14 @@ namespace Slime_Engine
             float updX = translationVector.X;
             float updY = translationVector.Y;
 
-            if (updX > MAX_X)
-                updX = MAX_X;
-            else if (updX < MIN_X)
-                updX = MIN_X;
-            if (updY > MAX_Y)
-                updY = MAX_Y;
-            else if (updY < MIN_Y)
-                updY = MIN_Y;
+            if (updX > MAX_X - current_size / 2)
+                updX = MAX_X - current_size / 2;
+            else if (updX < MIN_X + current_size / 2)
+                updX = MIN_X + current_size / 2;
+            if (updY > MAX_Y - current_size / 2)
+                updY = MAX_Y - current_size / 2;
+            else if (updY < MIN_Y + current_size / 2)
+                updY = MIN_Y + current_size / 2;
 
             transNode.Translation = new Vector3(updX, updY, transNode.Translation.Z);
         }
@@ -55,14 +79,14 @@ namespace Slime_Engine
             float updX = translationVector.Y;
             float updY = -1 * translationVector.X;
 
-            if (updX > MAX_X) 
-                updX = MAX_X;
-            else if (updX < MIN_X)
-                updX = MIN_X;
-            if (updY > MAX_Y)
-                updY = MAX_Y;
-            else if (updY < MIN_Y)
-                updY = MIN_Y;
+            if (updX > MAX_X - current_size / 2)
+                updX = MAX_X - current_size / 2;
+            else if (updX < MIN_X + current_size / 2)
+                updX = MIN_X + current_size / 2;
+            if (updY > MAX_Y - current_size / 2)
+                updY = MAX_Y - current_size / 2;
+            else if (updY < MIN_Y + current_size / 2)
+                updY = MIN_Y + current_size / 2;
 
             transNode.Translation = new Vector3(updX, updY, transNode.Translation.Z);
         }

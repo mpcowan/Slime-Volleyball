@@ -574,22 +574,22 @@ namespace Slime_Engine
             if (vballPosition.Y < 0)
             {
                 Vector3 playerSlimePosition = player_slime.getWorldTransformationTranslation();
-                if (vballPosition.Y < playerSlimePosition.Y + SLIME_SIZE / 2 && vballPosition.Y > playerSlimePosition.Y - SLIME_SIZE / 2)
+                if (vballPosition.Y < playerSlimePosition.Y + player_slime.getSize() / 2 && vballPosition.Y > playerSlimePosition.Y - player_slime.getSize() / 2)
                 {
-                    if (vballPosition.X < playerSlimePosition.X + SLIME_SIZE / 2 && vballPosition.X > playerSlimePosition.X - SLIME_SIZE / 2)
+                    if (vballPosition.X < playerSlimePosition.X + player_slime.getSize() / 2 && vballPosition.X > playerSlimePosition.X - player_slime.getSize() / 2)
                     {
-                        z_offset = 21f + TARGET_SIZE;
+                        z_offset = player_slime.getHeight() + TARGET_SIZE / 2;
                     }
                 }
             }
             else
             {
                 Vector3 oppSlimePosition = opponent_slime.getWorldTransformationTranslation();
-                if (vballPosition.Y < oppSlimePosition.Y + SLIME_SIZE / 2 && vballPosition.Y > oppSlimePosition.Y - SLIME_SIZE / 2)
+                if (vballPosition.Y < oppSlimePosition.Y + opponent_slime.getSize() / 2 && vballPosition.Y > oppSlimePosition.Y - opponent_slime.getSize() / 2)
                 {
-                    if (vballPosition.X < oppSlimePosition.X + SLIME_SIZE / 2 && vballPosition.X > oppSlimePosition.X - SLIME_SIZE / 2)
+                    if (vballPosition.X < oppSlimePosition.X + opponent_slime.getSize() / 2 && vballPosition.X > oppSlimePosition.X - opponent_slime.getSize() / 2)
                     {
-                        z_offset = 21f + TARGET_SIZE;
+                        z_offset = opponent_slime.getHeight() + TARGET_SIZE / 2;
                     }
                 }
             }

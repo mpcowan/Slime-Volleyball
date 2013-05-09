@@ -52,7 +52,7 @@ namespace Slime_Engine
             return Vector3Helper.GetDimensions(geomNode.Model.MinimumBoundingBox).Z;
         }
 
-        public void scaleToSize(float size)
+        public virtual void scaleToSize(float size)
         {
             float scale = 1f;
             Vector3 dimensions = getDimensions();

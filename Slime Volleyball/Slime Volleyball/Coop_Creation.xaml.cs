@@ -22,6 +22,12 @@ namespace Slime_Volleyball
             connect_to_game_server("160.39.234.102", 9001);
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            App._socket.Close();
+            base.OnNavigatedFrom(e);
+        }
+
         private void connect_to_game_server(string ip, int port)
         {
             DnsEndPoint game_server = new DnsEndPoint(ip, port);
@@ -58,7 +64,10 @@ namespace Slime_Volleyball
             }
             else
             {
-                MessageBox.Show("Unable to contact the game server. Try again later.", "Woops :(", MessageBoxButton.OK);
+                Dispatcher.BeginInvoke(() =>
+                    {
+                        MessageBox.Show("Unable to contact the game server. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    });
             }
         }
 
@@ -75,7 +84,10 @@ namespace Slime_Volleyball
             }
             else
             {
-                MessageBox.Show("Unable to send create command to game server. Try again later.", "Woops :(", MessageBoxButton.OK);
+                Dispatcher.BeginInvoke(() =>
+                    {
+                        MessageBox.Show("Unable to send create command to game server. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    });
             }
         }
 
@@ -104,12 +116,18 @@ namespace Slime_Volleyball
                 }
                 catch (Exception exc)
                 {
-                    MessageBox.Show("Unable to receive a game room id from server. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        MessageBox.Show("Unable to receive a game room id from server. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    });
                 }
             }
             else
             {
-                MessageBox.Show("Unable to receive a game room id from server. Try again later.", "Woops :(", MessageBoxButton.OK);
+                Dispatcher.BeginInvoke(() =>
+                    {
+                        MessageBox.Show("Unable to receive a game room id from server. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    });
             }
         }
 
@@ -121,15 +139,30 @@ namespace Slime_Volleyball
                 string response = Encoding.UTF8.GetString(e.Buffer, e.Offset, e.BytesTransferred);
                 response = response.Trim('\0');
 
-                Dispatcher.BeginInvoke(() =>
+                if (response.StartsWith("ERROR"))
                 {
-                    App.opponent_ip = response;
-                    start_btn.IsEnabled = true;
-                });
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        MessageBox.Show("It doesn't seem that your friend ever joined. Try again later.", "Woops :(", MessageBoxButton.OK);
+                        NavigationService.GoBack();
+                    });
+                }
+                else
+                {
+
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        App.opponent_ip = response;
+                        start_btn.IsEnabled = true;
+                    });
+                }
             }
             else
             {
-                MessageBox.Show("It doesn't seem that your friend ever joined. Try again later.", "Woops :(", MessageBoxButton.OK);
+                Dispatcher.BeginInvoke(() =>
+                    {
+                        MessageBox.Show("It doesn't seem that your friend ever joined. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    });
             }
         }
 

@@ -74,8 +74,12 @@ namespace Slime_Engine
         bool system_paused = false;
         bool game_over = false;
         int game_winner;
-        bool powerUpisCreated = false;
-        int powerUpCountDown = 300;        int powerUpNum = 0;        int powerUpFrequency = 180;        bool testTwoPowerUps = true;
+        bool powerUpisCreated = false;
+
+        int powerUpCountDown = 300;
+        int powerUpNum = 0;
+        int powerUpFrequency = 180;
+        bool testTwoPowerUps = true;
 
         int ball_drop_countdown;
         bool ball_drop_delay;
@@ -97,7 +101,8 @@ namespace Slime_Engine
         //Paddle opponent_slime;
         Slime player_slime;
         Slime opponent_slime;
-        List <PowerUp> powerUpList = new List<PowerUp>();        float powerUpSize = 20f;
+        List <PowerUp> powerUpList = new List<PowerUp>();
+        float powerUpSize = 20f;
         #endregion NODES
 
         int playerOneScore = 0;

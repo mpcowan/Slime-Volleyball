@@ -38,35 +38,6 @@ namespace Slime_Volleyball
 
             InitializeComponent();
 
-            #region AppBar Creation
-
-            appbar = new ApplicationBar();
-            appbar.IsVisible = true;
-            appbar.Opacity = 1;
-            appbar.IsMenuEnabled = false;
-
-            pause_btn = new ApplicationBarIconButton();
-            pause_btn.Text = "Resume";
-            pause_btn.IconUri = new Uri("/Images/appbar.control.play.png", UriKind.Relative);
-            ApplicationBarIconButton quit_btn = new ApplicationBarIconButton();
-            quit_btn.Text = "Quit";
-            quit_btn.IconUri = new Uri("/Images/appbar.close.png", UriKind.Relative);
-            ApplicationBarIconButton help_btn = new ApplicationBarIconButton();
-            help_btn.Text = "Help";
-            help_btn.IconUri = new Uri("/Images/appbar.question.png", UriKind.Relative);
-
-            appbar.Buttons.Add(help_btn);
-            appbar.Buttons.Add(quit_btn);
-            appbar.Buttons.Add(pause_btn);
-            
-            help_btn.Click += help_btn_Click;
-            quit_btn.Click += quit_btn_Click;
-            pause_btn.Click += pause_btn_Click;
-
-            this.ApplicationBar = appbar;
-
-            #endregion
-
             // Get the content manager from the application
             contentManager = (Application.Current as App).Content;
 
@@ -88,6 +59,42 @@ namespace Slime_Volleyball
             else
                 IsolatedStorageSettings.ApplicationSettings["GamesPlayed"] = (int)IsolatedStorageSettings.ApplicationSettings["GamesPlayed"] + 1;
             IsolatedStorageSettings.ApplicationSettings.Save();
+        }
+
+        private void createAppBar(bool full)
+        {
+            appbar = new ApplicationBar();
+            appbar.IsVisible = true;
+            appbar.Opacity = 1;
+            appbar.IsMenuEnabled = false;
+
+            pause_btn = new ApplicationBarIconButton();
+            pause_btn.Text = "Resume";
+            pause_btn.IconUri = new Uri("/Images/appbar.control.play.png", UriKind.Relative);
+            ApplicationBarIconButton quit_btn = new ApplicationBarIconButton();
+            quit_btn.Text = "Quit";
+            quit_btn.IconUri = new Uri("/Images/appbar.close.png", UriKind.Relative);
+            ApplicationBarIconButton help_btn = new ApplicationBarIconButton();
+            help_btn.Text = "Help";
+            help_btn.IconUri = new Uri("/Images/appbar.question.png", UriKind.Relative);
+
+            if (full)
+                appbar.Buttons.Add(help_btn);
+
+            appbar.Buttons.Add(quit_btn);
+
+            if (full)
+                appbar.Buttons.Add(pause_btn);
+
+            if (full)
+                help_btn.Click += help_btn_Click;
+
+            quit_btn.Click += quit_btn_Click;
+
+            if (full)
+                pause_btn.Click += pause_btn_Click;
+
+            this.ApplicationBar = appbar;
         }
 
         void GamePage_LayoutUpdated(object sender, EventArgs e)
@@ -116,6 +123,11 @@ namespace Slime_Volleyball
                 engine = new Engine(gameType, App.gameID, App.opponent_ip);
             else
                 engine = new Engine("single", "0", App.opponent_ip);
+
+            if (gameType == "opponent")
+                createAppBar(false);
+            else
+                createAppBar(true);
 
             engine.Initialize(SharedGraphicsDeviceManager.Current, contentManager, viewfinderBrush);
 

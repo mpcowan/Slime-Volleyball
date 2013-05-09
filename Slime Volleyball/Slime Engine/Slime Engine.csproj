@@ -71,6 +71,7 @@
     <Compile Include="InvisibleWall.cs" />
     <Compile Include="Net.cs" />
     <Compile Include="Paddle.cs" />
+    <Compile Include="PowerUp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Slime.cs" />
     <Compile Include="Slime_AI.cs" />

@@ -1,6 +1,7 @@
 #region Using Statements
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -48,14 +49,14 @@ namespace Slime_Engine
         const float COURT_WIDTH = 5 * GROUND_MARKER_SIZE;
         const float COURT_LENGTH = 7 * GROUND_MARKER_SIZE;
         const float PADDLE_ANGLE = 25f;
-        const float PADDLE_HEIGHT = 15f;
+        //const float PADDLE_HEIGHT = 15f;
         const float SLIME_HEIGHT = 2f;
         const float BALL_INIT_HEIGHT = 4 * GROUND_MARKER_SIZE;
         const float PHYSICS_SPEED = 1 / 15f;
         const float GRAVITY = 30f;
         const int SYSTEM_ID = 1;
         const int PLAYER_ID = 0;
-        const int WINNING_SCORE = 7;
+        const int WINNING_SCORE = 6;
         Vector3 PLAYER_BALL_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
         Vector3 OPPONENT_BALL_START = new Vector3(0, 2 * GROUND_MARKER_SIZE, BALL_INIT_HEIGHT);
         Vector3 PLAYER_SLIME_START = new Vector3(0, -2 * GROUND_MARKER_SIZE, SLIME_HEIGHT);
@@ -73,6 +74,8 @@ namespace Slime_Engine
         bool system_paused = false;
         bool game_over = false;
         int game_winner;
+        bool powerUpisCreated = false;
+        int powerUpCountDown = 300;        int powerUpNum = 0;        int powerUpFrequency = 180;        bool testTwoPowerUps = true;
 
         int ball_drop_countdown;
         bool ball_drop_delay;
@@ -94,6 +97,7 @@ namespace Slime_Engine
         //Paddle opponent_slime;
         Slime player_slime;
         Slime opponent_slime;
+        List <PowerUp> powerUpList = new List<PowerUp>();        float powerUpSize = 20f;
         #endregion NODES
 
         int playerOneScore = 0;
@@ -149,7 +153,10 @@ namespace Slime_Engine
             else if (gameType.Equals("leader"))
                 selected_game_type = (int)game_types.leader;
             else if (gameType.Equals("opponent"))
+            {
                 selected_game_type = (int)game_types.opponent;
+                player_paused = false;
+            }
             else
                 selected_game_type = (int)game_types.single;
         }
@@ -162,6 +169,7 @@ namespace Slime_Engine
             {
                 // Retrieve the data from the buffer
                 string response = Encoding.UTF8.GetString(e.Buffer, e.Offset, e.BytesTransferred);
+                bytes_recv += e.BytesTransferred;
                 response = response.Trim('\0');
                 string[] response_parts = response.Split(' ');
 
@@ -180,7 +188,7 @@ namespace Slime_Engine
                             {
                                 receive_seq = seq_num;
                                 if (opponent_slime != null)
-                                    opponent_slime.setTranslation(new Vector3(opp_y, -1 * opp_x, opp_z));
+                                    opponent_slime.setTranslation(new Vector3(opp_y, opp_x, opp_z));
                             }
                         }
                         catch (Exception exp)
@@ -208,8 +216,10 @@ namespace Slime_Engine
                             if (seq_num > receive_seq)
                             {
                                 receive_seq = seq_num;
+                                if (ball_z == 0)
+                                    ball_z = -30f;
                                 vball.setTranslation(new Vector3(ball_x, -1 * ball_y, ball_z));
-                                opponent_slime.setTranslation(new Vector3(opp_y, -1 * opp_x, opp_z));
+                                opponent_slime.setTranslation(new Vector3(opp_y, opp_x, opp_z));
                                 playerOneScore = p1score;
                                 playerTwoScore = p2score;
                             }
@@ -228,7 +238,7 @@ namespace Slime_Engine
         {
             SocketAsyncEventArgs receiveEventArg = new SocketAsyncEventArgs();
             receiveEventArg.RemoteEndPoint = new IPEndPoint(IPAddress.Any, listening_port);
-            receiveEventArg.SetBuffer(new byte[1024], 0, 1024);
+            receiveEventArg.SetBuffer(new byte[512], 0, 512);
             receiveEventArg.Completed += receiveEventArg_Completed;
             receiverSocket.ReceiveFromAsync(receiveEventArg);
         }
@@ -262,6 +272,8 @@ namespace Slime_Engine
         /// <param name="type">Pause requested by player (0) or by system (1)</param>
         public void pause(int type)
         {
+            if (selected_game_type == (int)game_types.opponent)
+                return;
             if (type == 0)
             {
                 if (!player_paused)
@@ -334,6 +346,13 @@ namespace Slime_Engine
             pause(PLAYER_ID);
             game_over = true;
             game_winner = winner;
+            if (selected_game_type == (int)game_types.leader)
+            {
+                for (int a = 0; a < 5; a++)
+                {
+                    sendOutData();
+                }
+            }
         }
 
         /// <summary>
@@ -483,9 +502,9 @@ namespace Slime_Engine
             ground_marker_node.AddChild(invisWallFour.getTransformNode());
 
             // Create the court
-            court = new Court(float.MaxValue, new Vector3(COURT_WIDTH, COURT_LENGTH, PLANAR_THICKNESS));
+            court = new Court(float.MaxValue, new Vector3(COURT_WIDTH, COURT_LENGTH, PLANAR_THICKNESS * 4));
             // Initial translation
-            //court.translate(new Vector3(0, 0, PLANAR_THICKNESS / 2));
+            court.translate(new Vector3(0, 0, -14f));
             // Add it to the scene
             ground_marker_node.AddChild(court.getTransformNode());
 
@@ -565,6 +584,106 @@ namespace Slime_Engine
             ground_marker_node.AddChild(vball.getTransformNode());
         }
 
+        private void createPowerUp()
+        {
+            int badPowerUpNum = 0;
+            int goodPowerUpNum = 1;
+            Random rand = new Random();
+            int magicNum = 3;
+            int num = rand.Next(powerUpFrequency);
+
+            if (powerUpList.Count >= 2)
+                return;
+
+            if (testTwoPowerUps)
+            {
+
+                PowerUp pUp = new PowerUp(powerUpNum, 0,
+                    new Vector3(powerUpSize, powerUpSize, powerUpSize), powerUpCountDown);
+                pUp.setLocation(3, COURT_WIDTH, COURT_LENGTH);
+                powerUpNum++;
+                PowerUp pUp2 = new PowerUp(powerUpNum, 1,
+                    new Vector3(powerUpSize, powerUpSize, powerUpSize), powerUpCountDown);
+                pUp2.setLocation(4, COURT_WIDTH, COURT_LENGTH);
+                powerUpList.Add(pUp);
+                powerUpList.Add(pUp2);
+                ground_marker_node.AddChild(pUp.getTransformNode());
+                ground_marker_node.AddChild(pUp2.getTransformNode());
+                testTwoPowerUps = false;
+            }
+
+            if (magicNum == num)
+            {
+                //powerUpNum uniquely identifies powerups
+                int newRand = rand.Next(2);
+                PowerUp pUp = new PowerUp(powerUpNum, newRand,
+                    new Vector3(powerUpSize, powerUpSize, powerUpSize), powerUpCountDown);
+                powerUpList.Add(pUp);
+                pUp.randomLocation(COURT_WIDTH, COURT_LENGTH, PLANAR_THICKNESS);
+                powerUpNum++;
+                ground_marker_node.AddChild(pUp.getTransformNode());
+            }
+        }
+
+
+        private void powerUpTick()
+        {
+            for (int x = 0; x < powerUpList.Count; x++)
+            {
+                PowerUp thisPowerUp = powerUpList[x];
+                thisPowerUp.tick();
+                if (thisPowerUp.isObtained())
+                {
+                    if (!thisPowerUp.isRemoved())
+                    {
+                        ground_marker_node.RemoveChild(thisPowerUp.getTransformNode());
+                        thisPowerUp.remove();
+                        addEffects(thisPowerUp);
+                    }
+                    
+                }
+                if (thisPowerUp.turnsAlive() > thisPowerUp.powerUpActive)
+                {
+                    ground_marker_node.RemoveChild(thisPowerUp.getTransformNode());
+                    removeEffects(thisPowerUp);
+                    thisPowerUp.delete();
+                    powerUpList.RemoveAt(x);
+                    x--;
+                }
+            }
+        }
+
+        private void addEffects(PowerUp thisPowerUp)
+        {
+            float effect = thisPowerUp.getPowerUpEffect();
+            for (int x = 0; x < powerUpList.Count; x++)
+            {
+                if (!powerUpList[x].Equals(thisPowerUp) && powerUpList[x].isObtained())
+                {
+                    //if affects same player
+                    if (thisPowerUp.affectsPlayerOne == powerUpList[x].affectsPlayerOne)
+                    {
+                        powerUpList[x].delete();
+                        ground_marker_node.RemoveChild(powerUpList[x].getTransformNode());
+                        powerUpList.RemoveAt(x);
+                        x--;
+                    }
+                }
+            }
+            if (thisPowerUp.affectsPlayerOne)
+                player_slime.scaleToSize(effect);
+            else
+                opponent_slime.scaleToSize(effect);
+        }
+
+        private void removeEffects(PowerUp thisPowerUp)
+        {
+            if (thisPowerUp.affectsPlayerOne)
+                player_slime.scaleToSize(GROUND_MARKER_SIZE);
+            else
+                opponent_slime.scaleToSize(GROUND_MARKER_SIZE);
+        }
+
         private void update_tracker()
         {
             Vector3 vballPosition = vball.getWorldTransformationTranslation();
@@ -627,7 +746,7 @@ namespace Slime_Engine
                     resume(SYSTEM_ID);
                 if (sendData && selected_game_type != (int)game_types.single && senderSocket != null)
                     sendOutData();
-                sendData = !sendData;
+                sendData = true;
             }
             else
             {
@@ -645,6 +764,11 @@ namespace Slime_Engine
             // run AI logic
             if (selected_game_type == (int)game_types.single)
             {
+                if (!isPaused(PLAYER_ID) && !isPaused(SYSTEM_ID))
+                {
+                    createPowerUp();
+                    powerUpTick();
+                }
                 TransformNode slimeAI_TransformNode = opponent_slime.getTransformNode();
                 Vector3 vballPosition = vball.getWorldTransformationTranslation();
                 opponent_slime.setAbsoluteTranslation(slime_ai.makeMove(vballPosition, slimeAI_TransformNode.Translation));
@@ -663,12 +787,12 @@ namespace Slime_Engine
                     playerTwoScore++;
                     resetRound(SYSTEM_ID);
                 }
-                if (playerOneScore == WINNING_SCORE)
-                    announce_winner(PLAYER_ID);
-                if (playerTwoScore == WINNING_SCORE)
-                    announce_winner(SYSTEM_ID);
-                
             }
+
+            if (playerOneScore == WINNING_SCORE)
+                announce_winner(PLAYER_ID);
+            if (playerTwoScore == WINNING_SCORE)
+                announce_winner(SYSTEM_ID);
 
             update_tracker();
 

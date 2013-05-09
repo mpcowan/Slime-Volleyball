@@ -13,6 +13,7 @@ using Komires.MataliPhysics;
 using MataliPhysicsObject = Komires.MataliPhysics.PhysicsObject;
 using GoblinXNA.Sounds;
 using Microsoft.Xna.Framework.Audio;
+using GoblinXNA.Physics;
 
 namespace Slime_Engine
 {
@@ -61,7 +62,9 @@ namespace Slime_Engine
 
         protected override void obj_collision_done(MataliPhysicsObject baseObject, MataliPhysicsObject collidingObject)
         {
-            point_scored = true;
+            String materialName = ((IPhysicsObject)collidingObject.UserTagObj).MaterialName;
+            if(materialName.Equals("ball"))
+                point_scored = true;
         }
     }
 }

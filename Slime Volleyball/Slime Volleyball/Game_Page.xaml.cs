@@ -214,7 +214,7 @@ namespace Slime_Volleyball
                 pause_btn.IconUri = new Uri("Images/appbar.control.play.png", UriKind.Relative);
                 engine.pause(0);
             }
-            MessageBox.Show("Gameplay:\n\nMove your paddle to control your slime. Make sure the paddle can be seen by the phones camera. The little red dot tracks the position of the ball.\n\nScoring:\n\nUse the invisible walls around the court and your slime to return the ball over the net. A point is scored when the ball touches the ground on your opponent's side.\n\nWinning:\n\nThe first player to score 7 points wins the game.", "Help + Info", MessageBoxButton.OK);
+            MessageBox.Show("Gameplay:\n\nMove your paddle to control your slime. Make sure the paddle can be seen by the phones camera. The little red dot tracks the position of the ball.\n\nScoring:\n\nUse the invisible walls around the court and your slime to return the ball over the net. A point is scored when the ball touches the ground on your opponent's side.\n\nWinning:\n\nThe first player to score 6 points wins the game.\n\nPower-Ups:\n\nThe black and red cubes that appear in the corners increase and decrease paddle size respectively. To select one simply move your slime onto it. They last for 10 seconds.", "Help + Info", MessageBoxButton.OK);
         }
 
         void quit_btn_Click(object sender, EventArgs e)

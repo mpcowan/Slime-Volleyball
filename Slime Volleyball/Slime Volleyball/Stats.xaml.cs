@@ -23,6 +23,7 @@ namespace Slime_Volleyball
         {
             InitializeComponent();
             load_data();
+            convertToMega();
             display();
         }
 
@@ -46,6 +47,18 @@ namespace Slime_Volleyball
             else
                 recv = "0";
             total = (Convert.ToInt32(sent) + Convert.ToInt32(recv)).ToString();
+        }
+
+        private void convertToMega()
+        {
+            int s = Convert.ToInt32(sent);
+            sent = ((double)s / 1048576.0).ToString("0.00") + " MB";
+
+            int r = Convert.ToInt32(recv);
+            recv = ((double)r / 1048576.0).ToString("0.00") + " MB";
+
+            int t = Convert.ToInt32(total);
+            total = ((double)t / 1048576.0).ToString("0.00") + " MB";
         }
 
         private void display()

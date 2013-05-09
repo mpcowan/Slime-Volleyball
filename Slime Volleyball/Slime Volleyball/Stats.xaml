@@ -43,11 +43,11 @@
                 <TextBlock Text="Data Usage Stats" FontSize="40" Margin="0,0,0,12" Foreground="#2980b9"/>
                 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                    <TextBlock Text="Bytes Sent:  " FontSize="36" />
+                    <TextBlock Text="Sent:  " FontSize="36" />
                     <TextBlock Name="sent_tb" FontSize="36" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                    <TextBlock Text="Bytes Received:  " FontSize="36" />
+                    <TextBlock Text="Received:  " FontSize="36" />
                     <TextBlock Name="received_tb" FontSize="36" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">

@@ -47,9 +47,9 @@ namespace Slime_Engine
 
             // Create a material to apply to the ball
             Material ballMaterial = new Material();
-            ballMaterial.Diffuse = Color.SteelBlue.ToVector4();
-            ballMaterial.Specular = Color.White.ToVector4();
-            ballMaterial.SpecularPower = 5;
+            ballMaterial.Diffuse = new Vector4(0.752941f, 0.223529f, 0.168627f, 1f);
+            ballMaterial.Specular = new Vector4(0.752941f, 0.223529f, 0.168627f, 1f);
+            ballMaterial.SpecularPower = .3f;
 
             geomNode.Material = ballMaterial;
 

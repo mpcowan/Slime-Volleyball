@@ -113,12 +113,18 @@ namespace Slime_Volleyball
                 }
                 else
                 {
-                    MessageBox.Show("Unable to join specified game ID. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        MessageBox.Show("Unable to join specified game ID. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    });
                 }
             }
             else
             {
-                MessageBox.Show("Unable to join specified game ID. Try again later.", "Woops :(", MessageBoxButton.OK);
+                Dispatcher.BeginInvoke(() =>
+                    {
+                        MessageBox.Show("Unable to join specified game ID. Try again later.", "Woops :(", MessageBoxButton.OK);
+                    });
             }
         }
     }

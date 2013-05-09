@@ -77,7 +77,7 @@ namespace Slime_Engine
             Material paddleMaterial = new Material();
             paddleMaterial.Diffuse = color;
             paddleMaterial.Specular = color;
-            paddleMaterial.SpecularPower = .3f;
+            paddleMaterial.SpecularPower = .15f;
 
             geomNode.Material = paddleMaterial;
 

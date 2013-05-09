@@ -48,8 +48,8 @@ namespace Slime_Engine
             // Create a material to apply to the court
             Material courtMaterial = new Material();
             courtMaterial.Diffuse = Color.DarkGreen.ToVector4();
-            courtMaterial.Specular = Color.White.ToVector4();
-            courtMaterial.SpecularPower = 5;
+            courtMaterial.Specular = Color.DarkGreen.ToVector4();
+            courtMaterial.SpecularPower = 0.3f;
 
             geomNode.Material = courtMaterial;
 

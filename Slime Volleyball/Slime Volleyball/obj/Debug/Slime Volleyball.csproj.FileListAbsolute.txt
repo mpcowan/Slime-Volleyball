@@ -228,6 +228,7 @@ M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\Game_Page.g.cs
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\join_page.g.cs
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\MainPage.g.cs
+M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\Stats.g.cs
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\Slime Volleyball.g.resources
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\Slime_Volleyball.Resources.AppResources.resources
 M:\SkyDrive\GitHub\Slime-Volleyball\Slime Volleyball\Slime Volleyball\obj\Debug\Slime Volleyball.csproj.GenerateResource.Cache

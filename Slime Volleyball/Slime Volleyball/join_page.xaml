@@ -30,7 +30,7 @@
                     <TextBox x:Name="gameID_tb" Text="" MinWidth="125" InputScope="Number" />
                 </StackPanel>
                 <TextBlock Text="Get this number from your friend so you can verse him" FontSize="24" Margin="0,17,0,0" />
-                <Button x:Name="join_btn" Content="Join Game" BorderThickness="0" Background="#FF762424" FontSize="37.333" Padding="25,15" Margin="0,50,0,0" Click="join_btn_Click" />
+                <Button x:Name="join_btn" Content="Join Game" BorderThickness="0" Background="#c0392b" FontSize="37.333" Padding="25,15" Margin="0,50,0,0" Click="join_btn_Click" />
             </StackPanel>
         </Grid>
     </Grid>

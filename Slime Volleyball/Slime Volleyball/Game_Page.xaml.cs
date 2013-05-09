@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 using Slime_Engine;
+using System.IO.IsolatedStorage;
 
 
 namespace Slime_Volleyball
@@ -81,6 +82,12 @@ namespace Slime_Volleyball
             // user is not interacting with the device
             Microsoft.Phone.Shell.PhoneApplicationService.Current.UserIdleDetectionMode =
                 Microsoft.Phone.Shell.IdleDetectionMode.Disabled;
+
+            if (!IsolatedStorageSettings.ApplicationSettings.Contains("GamesPlayed"))
+                IsolatedStorageSettings.ApplicationSettings["GamesPlayed"] = 1;
+            else
+                IsolatedStorageSettings.ApplicationSettings["GamesPlayed"] = (int)IsolatedStorageSettings.ApplicationSettings["GamesPlayed"] + 1;
+            IsolatedStorageSettings.ApplicationSettings.Save();
         }
 
         void GamePage_LayoutUpdated(object sender, EventArgs e)
@@ -120,6 +127,17 @@ namespace Slime_Volleyball
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            if (!IsolatedStorageSettings.ApplicationSettings.Contains("BytesSent"))
+                IsolatedStorageSettings.ApplicationSettings["BytesSent"] = engine.get_bytes_sent();
+            else
+                IsolatedStorageSettings.ApplicationSettings["BytesSent"] = (int)IsolatedStorageSettings.ApplicationSettings["BytesSent"] + engine.get_bytes_sent();
+
+            if (!IsolatedStorageSettings.ApplicationSettings.Contains("BytesRecv"))
+                IsolatedStorageSettings.ApplicationSettings["BytesRecv"] = engine.get_bytes_received();
+            else
+                IsolatedStorageSettings.ApplicationSettings["BytesRecv"] = (int)IsolatedStorageSettings.ApplicationSettings["BytesRecv"] + engine.get_bytes_received();
+            IsolatedStorageSettings.ApplicationSettings.Save();
+
             // Stop the timer
             timer.Stop();
 
@@ -140,6 +158,13 @@ namespace Slime_Volleyball
             if (engine.getWinner() == 0)
             {
                 MessageBox.Show("You have won this round of slime volleyball!", "Congrats!", MessageBoxButton.OK);
+
+                if (!IsolatedStorageSettings.ApplicationSettings.Contains("GamesWon"))
+                    IsolatedStorageSettings.ApplicationSettings["GamesWon"] = 1;
+                else
+                    IsolatedStorageSettings.ApplicationSettings["GamesWon"] = (int)IsolatedStorageSettings.ApplicationSettings["GamesWon"] + 1;
+                IsolatedStorageSettings.ApplicationSettings.Save();
+
                 // Stop the timer
                 timer.Stop();
 

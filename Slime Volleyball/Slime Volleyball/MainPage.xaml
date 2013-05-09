@@ -23,11 +23,14 @@
 		<TextBlock Text="Slime Volleyball 3D" Margin="9,12,0,0" Style="{StaticResource PhoneTextTitle1Style}" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
 		<Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0" VerticalAlignment="Center">
-			<StackPanel Orientation="Horizontal" Margin="0,0,0,26" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-				<Button Content="1 Player" BorderThickness="0" Background="#FF2B742E" FontSize="37.333" Margin="0,0,47,0" Padding="25,10" Click="Button_Click" />
-				<Button Content="2 Player" BorderThickness="0" Background="#FF4864C3" FontSize="37.333" Padding="25,10" Click="Button_Click_1" />
-			</StackPanel>
-		</Grid>
+            <StackPanel Orientation="Vertical">
+			    <StackPanel Orientation="Horizontal" Margin="0,0,0,26" HorizontalAlignment="Center">
+                    <Button Content="1 Player" BorderThickness="0" Background="#27ae60" FontSize="37.333" Margin="0,0,47,0" Padding="25,10" Click="Button_Click" />
+                    <Button Content="2 Player" BorderThickness="0" Background="#2980b9" FontSize="37.333" Padding="25,10" Click="Button_Click_1" />
+			    </StackPanel>
+                <Button Content="Statistics" BorderThickness="0" Background="#c0392b" FontSize="37.333" Padding="25, 10" Width="230" Click="Button_Click_2" />
+            </StackPanel>
+        </Grid>
         
 	</Grid>
 

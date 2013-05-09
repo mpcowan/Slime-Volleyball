@@ -512,7 +512,7 @@ namespace Slime_Engine
             
             // Create the slime for the player
             //player_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Red.ToVector4());
-            player_slime = new Slime(float.MaxValue, GROUND_MARKER_SIZE, Color.SlateGray.ToVector4());
+            player_slime = new Slime(float.MaxValue, GROUND_MARKER_SIZE, Color.SlateGray.ToVector4(), COURT_WIDTH / 2, -1 * COURT_WIDTH / 2, 0f, -1 * COURT_LENGTH / 2);
             // Initial translation
             player_slime.translate(PLAYER_SLIME_START);
             //player_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(-PADDLE_ANGLE)));
@@ -522,7 +522,7 @@ namespace Slime_Engine
 
             // Create the slime for the opponent
             //opponent_slime = new Paddle(float.MaxValue, new Vector3(WAND_MARKER_SIZE  * 1.5f, WAND_MARKER_SIZE * 1.5f, 3f), Color.Purple.ToVector4());
-            opponent_slime = new Slime(float.MaxValue, GROUND_MARKER_SIZE, Color.Purple.ToVector4());
+            opponent_slime = new Slime(float.MaxValue, GROUND_MARKER_SIZE, Color.Purple.ToVector4(), COURT_WIDTH / 2, -1 * COURT_WIDTH / 2, COURT_LENGTH / 2, 0f);
             // Initial translation
             opponent_slime.translate(OPPONENT_SLIME_START);
             //opponent_slime.setRotation(Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(PADDLE_ANGLE)));
@@ -647,7 +647,7 @@ namespace Slime_Engine
             {
                 TransformNode slimeAI_TransformNode = opponent_slime.getTransformNode();
                 Vector3 vballPosition = vball.getWorldTransformationTranslation();
-                slimeAI_TransformNode.Translation = slime_ai.makeMove(vballPosition, slimeAI_TransformNode.Translation);
+                opponent_slime.setAbsoluteTranslation(slime_ai.makeMove(vballPosition, slimeAI_TransformNode.Translation));
 
             }
             if (court.is_point_scored())
